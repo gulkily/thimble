@@ -14,7 +14,7 @@ def read_file(file_path):
 
 def extract_metadata(content):
     author = re.search(r'Author:\s*(.+)', content, re.IGNORECASE)
-    author = author.group(1) if author else "Unknown"
+    author = author.group(1) if author else ""
     hashtags = re.findall(r'#\w+', content)
     return author, hashtags
 

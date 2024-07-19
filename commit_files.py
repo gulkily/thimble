@@ -14,7 +14,7 @@ def calculate_file_hash(file_path):
 
 def extract_metadata(content, file_path):
     metadata = {
-        'author': 'Unknown',
+        'author': '',
         'title': os.path.basename(file_path),
         'hashtags': [],
         'file_hash': calculate_file_hash(file_path)
