@@ -1,4 +1,5 @@
 # generate_report.py
+# to run: python3 generate_report.py
 
 import os
 import re
