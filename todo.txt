@@ -1,0 +1,8 @@
+automated pull and push from multiple repos
+
+how to guide for what to do when things break
+	include scripts for how to fix common issue
+	example: scripts to reset git history and push
+	script to recover from git history being reset on the server
+
+how to not rely on git, since it is so brittle?
