@@ -3,7 +3,7 @@
 
 import os
 import re
-import git
+import subprocess
 from datetime import datetime
 import json
 import hashlib
@@ -41,32 +41,34 @@ def extract_metadata(content, file_path):
 def store_metadata(file_path, metadata):
     metadata_dir = os.path.join(os.path.dirname(file_path), 'metadata')
     os.makedirs(metadata_dir, exist_ok=True)
-    
+
     metadata_file = os.path.join(metadata_dir, f"{os.path.basename(file_path)}.json")
-    
+
     with open(metadata_file, 'w', encoding='utf-8') as f:
         json.dump(metadata, f, indent=2)
-    
+
     return metadata_file
 
+def run_git_command(command):
+    process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+    output, error = process.communicate()
+    return output.decode('utf-8').strip(), error.decode('utf-8').strip()
+
 def commit_text_files(repo_path="."):
-    try:
-        repo = git.Repo(repo_path)
-    except git.exc.InvalidGitRepositoryError:
-        print(f"Error: {repo_path} is not a valid Git repository.")
-        return
+    os.chdir(repo_path)
 
     # Check if there are any changes
-    if not repo.is_dirty() and not repo.untracked_files:
+    status_output, _ = run_git_command("git status --porcelain")
+    if not status_output:
         print("No changes to commit.")
         return
 
     # Get all modified and untracked files
-    changed_files = [item.a_path for item in repo.index.diff(None)]
-    untracked_files = repo.untracked_files
+    changed_files, _ = run_git_command("git diff --name-only")
+    untracked_files, _ = run_git_command("git ls-files --others --exclude-standard")
 
-    # Filter for .txt files
-    txt_files = [f for f in changed_files + untracked_files if f.endswith('.txt')]
+    all_files = changed_files.split('\n') + untracked_files.split('\n')
+    txt_files = [f for f in all_files if f.endswith('.txt')]
 
     if not txt_files:
         print("No uncommitted .txt files found.")
@@ -79,11 +81,11 @@ def commit_text_files(repo_path="."):
         try:
             with open(full_path, 'r', encoding='utf-8') as f:
                 content = f.read()
-            
+
             metadata = extract_metadata(content, full_path)
             metadata_file = store_metadata(full_path, metadata)
             metadata_files.append(metadata_file)
-            
+
             print(f"File: {file_path}")
             print(f"Author: {metadata['author']}")
             print(f"Title: {metadata['title']}")
@@ -94,13 +96,15 @@ def commit_text_files(repo_path="."):
             print(f"Error processing file {file_path}: {str(e)}")
 
     # Add all .txt files and metadata files to staging
-    repo.index.add(txt_files + metadata_files)
+    files_to_add = txt_files + metadata_files
+    for file in files_to_add:
+        run_git_command(f"git add {file}")
 
     # Create commit message
     commit_message = f"Auto-commit {len(txt_files)} text files and metadata on {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} by commit_files.py"
 
     # Commit the changes
-    repo.index.commit(commit_message)
+    run_git_command(f'git commit -m "{commit_message}"')
 
     print(f"Committed {len(txt_files)} text files and their metadata.")
     print("Commit message:", commit_message)
