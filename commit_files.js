@@ -4,8 +4,7 @@
 const fs = require('fs').promises;
 const path = require('path');
 const crypto = require('crypto');
-const simpleGit = require('simple-git');
-const git = simpleGit();
+const { execSync } = require('child_process');
 
 async function calculateFileHash(filePath) {
     const fileBuffer = await fs.readFile(filePath);
@@ -51,16 +50,26 @@ async function storeMetadata(filePath, metadata) {
     return metadataFile;
 }
 
+function gitCommand(command) {
+    try {
+        return execSync(command, { encoding: 'utf-8' }).trim();
+    } catch (error) {
+        console.error(`Error executing Git command: ${error.message}`);
+        return '';
+    }
+}
+
 async function commitTextFiles(repoPath = '.') {
     try {
-        const status = await git.status();
+        process.chdir(repoPath);
 
-        if (!status.modified.length && !status.not_added.length) {
+        const status = gitCommand('git status --porcelain');
+        if (!status) {
             console.log("No changes to commit.");
             return;
         }
 
-        const allChangedFiles = [...status.modified, ...status.not_added];
+        const allChangedFiles = status.split('\n').map(line => line.slice(3));
         const txtFiles = allChangedFiles.filter(file => file.endsWith('.txt'));
 
         if (!txtFiles.length) {
@@ -71,11 +80,10 @@ async function commitTextFiles(repoPath = '.') {
         const metadataFiles = [];
 
         for (const filePath of txtFiles) {
-            const fullPath = path.join(repoPath, filePath);
             try {
-                const content = await fs.readFile(fullPath, 'utf-8');
-                const metadata = await extractMetadata(content, fullPath);
-                const metadataFile = await storeMetadata(fullPath, metadata);
+                const content = await fs.readFile(filePath, 'utf-8');
+                const metadata = await extractMetadata(content, filePath);
+                const metadataFile = await storeMetadata(filePath, metadata);
                 metadataFiles.push(metadataFile);
 
                 console.log(`File: ${filePath}`);
@@ -89,10 +97,10 @@ async function commitTextFiles(repoPath = '.') {
             }
         }
 
-        await git.add([...txtFiles, ...metadataFiles]);
+        gitCommand(`git add ${[...txtFiles, ...metadataFiles].join(' ')}`);
 
-        const commitMessage = `Auto-commit ${txtFiles.length} text files and metadata on ${new Date().toISOString()} by commit_files.js`;
-        await git.commit(commitMessage);
+        const commitMessage = `Auto-commit ${txtFiles.length} text files and metadata on ${new Date().toISOString()}`;
+        gitCommand(`git commit -m "${commitMessage}"`);
 
         console.log(`Committed ${txtFiles.length} text files and their metadata.`);
         console.log("Commit message:", commitMessage);
