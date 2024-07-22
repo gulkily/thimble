@@ -1,3 +1,6 @@
+# commit_files.py
+# to run: python3 commit_files.py
+
 import os
 import re
 import git
@@ -94,7 +97,7 @@ def commit_text_files(repo_path="."):
     repo.index.add(txt_files + metadata_files)
 
     # Create commit message
-    commit_message = f"Auto-commit {len(txt_files)} text files and metadata on {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+    commit_message = f"Auto-commit {len(txt_files)} text files and metadata on {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} by commit_files.py"
 
     # Commit the changes
     repo.index.commit(commit_message)

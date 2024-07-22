@@ -25,7 +25,47 @@ function generateHtml(repoPath, outputFile) {
     let fileCount = 0;
 
     function walkDir(dir) {
-        // ... (rest of the walkDir function remains the same)
+        const files = fs.readdirSync(dir);
+        for (const file of files) {
+            const filePath = path.join(dir, file);
+            const stat = fs.statSync(filePath);
+            if (stat.isDirectory()) {
+                walkDir(filePath);
+            } else if (file.endsWith('.txt')) {
+                const relativePath = path.relative(repoPath, filePath);
+
+                let commitTimestamp;
+                try {
+                    const gitLog = execSync(`git log -1 --format=%cd --date=format:'%Y-%m-%d %H:%M:%S' -- "${relativePath}"`, { cwd: repoPath }).toString().trim();
+                    commitTimestamp = gitLog || 'N/A';
+                } catch (error) {
+                    commitTimestamp = 'N/A';
+                }
+
+                const storedDate = path.basename(path.dirname(filePath));
+
+                let author, hashtags;
+                try {
+                    const content = fs.readFileSync(filePath, 'utf-8');
+                    [author, hashtags] = extractMetadata(content);
+                } catch (error) {
+                    console.error(`Error reading file ${filePath}: ${error.message}`);
+                    author = 'Error';
+                    hashtags = [];
+                }
+
+                tableRows.push(tableRowTemplate
+                    .replace('{relative_path}', relativePath)
+                    .replace('{commit_timestamp}', commitTimestamp)
+                    .replace('{stored_date}', storedDate)
+                    .replace('{author}', author)
+                    .replace('{hashtags}', hashtags.join(', '))
+                );
+
+                fileCount++;
+                if (fileCount >= 100) return;
+            }
+        }
     }
 
     walkDir(path.join(repoPath, 'message'));
