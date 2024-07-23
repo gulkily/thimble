@@ -14,7 +14,7 @@ class CustomHTTPRequestHandler {
   handleRequest() {
     if (this.req.url === '/') {
       this.checkAndGenerateReport();
-      this.serveFile('repository_files.html');
+      this.serveFile('index.html');
     } else if (this.req.url.endsWith('.txt')) {
       this.serveTextFile();
     } else {
@@ -23,7 +23,7 @@ class CustomHTTPRequestHandler {
   }
 
   checkAndGenerateReport() {
-    const htmlFile = path.join(this.directory, 'repository_files.html');
+    const htmlFile = path.join(this.directory, 'index.html');
     fs.stat(htmlFile, (err, stats) => {
       if (err || Date.now() - stats.mtime.getTime() > 60000) {
         console.log(`${htmlFile} is older than 60 seconds or does not exist. Running generate_report.js...`);

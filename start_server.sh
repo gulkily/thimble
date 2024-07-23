@@ -91,7 +91,7 @@ serve_text_file() {
 
 # Function to check and generate report
 check_and_generate_report() {
-    local html_file="repository_files.html"
+    local html_file="index.html"
     if [[ ! -f "$html_file" ]] || [[ $(( $(date +%s) - $(date -r "$html_file" +%s) )) -gt 60 ]]; then
         echo "$html_file is older than 60 seconds or does not exist. Running generate_report.js..."
         node generate_report.js
@@ -111,7 +111,7 @@ handle_request() {
 
         if [[ "$path" == "/" ]]; then
             check_and_generate_report
-            serve_file "repository_files.html"
+            serve_file "index.html"
         elif [[ "$path" == *.txt ]]; then
             serve_text_file "${path#/}"
         else
