@@ -1,3 +1,6 @@
+# start_server.rb
+# to run: ruby start_server.rb
+
 require 'webrick'
 require 'optparse'
 require 'time'

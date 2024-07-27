@@ -1,3 +1,6 @@
+# start_server.py
+# to run: python3 start_server.py
+
 import http.server
 import socketserver
 import argparse

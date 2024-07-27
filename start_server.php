@@ -1,5 +1,8 @@
 <?php
 
+# start_server.php
+# to run: php start_server.php
+
 class CustomHTTPRequestHandler {
     private $directory;
 

@@ -1,6 +1,8 @@
 #!/bin/bash
 
-# Default values
+# start_server.sh
+# to run: ./start_server.sh
+
 PORT=8000
 DIRECTORY=$(pwd)
 
