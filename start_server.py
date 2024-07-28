@@ -1,12 +1,19 @@
 # start_server.py
 # to run: python3 start_server.py
 
+# start_server: v2
+
 import http.server
 import socketserver
 import argparse
 import os
 import time
 import subprocess
+import html
+import urllib.parse
+from datetime import datetime
+import random
+import string
 
 class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
@@ -21,6 +28,50 @@ class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             self.serve_text_file()
         else:
             super().do_GET()
+
+    def do_POST(self):
+        if self.path == '/chat.html':
+            self.handle_chat_post()
+        else:
+            self.send_error(405, "Method Not Allowed")
+
+    def handle_chat_post(self):
+        content_length = int(self.headers['Content-Length'])
+        post_data = self.rfile.read(content_length).decode('utf-8')
+        params = urllib.parse.parse_qs(post_data)
+
+        author = params.get('author', [''])[0]
+        message = params.get('message', [''])[0]
+
+        if author and message:
+            self.save_message(author, message)
+            self.send_response(200)
+            self.send_header('Content-type', 'text/html')
+            self.end_headers()
+            self.wfile.write(b"Message saved successfully")
+        else:
+            self.send_error(400, "Bad Request: Missing author or message")
+
+    def save_message(self, author, message):
+        today = datetime.now().strftime('%Y-%m-%d')
+        directory = os.path.join(self.directory, 'messages', today)
+        os.makedirs(directory, exist_ok=True)
+
+        title = self.generate_title(message)
+        filename = f"{title}.txt"
+        filepath = os.path.join(directory, filename)
+
+        with open(filepath, 'w', encoding='utf-8') as f:
+            f.write(message)
+            f.write(f"\n\nauthor: {author}")
+
+    def generate_title(self, message):
+        words = message.split()[:5]
+        title = '_'.join(words)
+        title = ''.join(c for c in title if c.isalnum() or c in ['_', '-'])
+        if not title:
+            title = ''.join(random.choices(string.ascii_lowercase, k=10))
+        return title
 
     def check_and_generate_report(self):
         html_file = os.path.join(self.directory, 'index.html')
