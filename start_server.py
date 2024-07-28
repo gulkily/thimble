@@ -24,6 +24,9 @@ class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
         if self.path == '/':
             self.check_and_generate_report()
             super().do_GET()
+        elif self.path == '/chat.html':
+            self.check_and_generate_chat_html()
+            super().do_GET()
         elif self.path.endswith('.txt'):
             self.serve_text_file()
         else:
@@ -49,12 +52,17 @@ class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             self.send_header('Content-type', 'text/html')
             self.end_headers()
             self.wfile.write(b"Message saved successfully")
+            # commit the message to the git repository using commit_files.py
+            subprocess.run(['python', 'commit_files.py', 'message'], check=True)
+            # redirect back to chat.html
+            self.wfile.write(b'<meta http-equiv="refresh" content="1;url=/chat.html">')
+
         else:
             self.send_error(400, "Bad Request: Missing author or message")
 
     def save_message(self, author, message):
         today = datetime.now().strftime('%Y-%m-%d')
-        directory = os.path.join(self.directory, 'messages', today)
+        directory = os.path.join(self.directory, 'message', today)
         os.makedirs(directory, exist_ok=True)
 
         title = self.generate_title(message)
@@ -80,6 +88,14 @@ class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             subprocess.run(['python', 'generate_report.py'], check=True)
         else:
             print(f"{html_file} is up-to-date.")
+
+    def check_and_generate_chat_html(self):
+        chat_html_file = os.path.join(self.directory, 'chat.html')
+        if not os.path.exists(chat_html_file) or time.time() - os.path.getmtime(chat_html_file) > 60:
+            print(f"{chat_html_file} is older than 60 seconds or does not exist. Running generate_chat_html.py...")
+            subprocess.run(['python', 'generate_chat_html.py'], check=True)
+        else:
+            print(f"{chat_html_file} is up-to-date.")
 
     def serve_text_file(self):
         path = self.translate_path(self.path)
@@ -131,4 +147,3 @@ if __name__ == "__main__":
     args = parser.parse_args()
     
     run_server(args.port, args.directory)
-
