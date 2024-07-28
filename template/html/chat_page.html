@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{title}</title>
+    <style>
+        {style}
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <h1>{title}</h1>
+        <div class="chat-messages">    
+            <div class="chat-messages">
+                {chat_messages}
+            </div>
+        </div>
+        <div class="message-form">
+            <form action="#" method="post">
+                <input type="text" name="author" placeholder="Your Name" required>
+                <textarea name="message" placeholder="Type your message here..." required></textarea>
+                <button type="submit">Send</button>
+            </form>
+        </div>
+        <div class="chat-info">
+            <p>Total Messages: {message_count}</p>
+            <p>Generated on: {current_time}</p>
+        </div>
+    </div>
+</body>
+</html>
