@@ -83,7 +83,7 @@ function generateHtml(repoPath, outputFile) {
 
 if (require.main === module) {
     const repoPath = '.';  // Current directory
-    const outputFile = 'index.html';
+    const outputFile = 'log.html';
     generateHtml(repoPath, outputFile);
     console.log(`Report generated: ${outputFile}`);
 }

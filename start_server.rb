@@ -18,6 +18,9 @@ class CustomHTTPHandler < WEBrick::HTTPServlet::FileHandler
     if req.path == '/'
       check_and_generate_report
       super
+    elsif req.path == '/log.html'
+      check_and_generate_report
+      super
     elsif req.path.end_with?('.txt')
       serve_text_file(req, res)
     else
@@ -26,7 +29,7 @@ class CustomHTTPHandler < WEBrick::HTTPServlet::FileHandler
   end
 
   def check_and_generate_report
-    html_file = File.join(@root, 'index.html')
+    html_file = File.join(@root, 'log.html')
     if !File.exist?(html_file) || Time.now - File.mtime(html_file) > 60
       puts "#{html_file} is older than 60 seconds or does not exist. Running generate_report.rb..."
       system('ruby generate_report.rb')

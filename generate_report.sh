@@ -66,7 +66,7 @@ generate_html() {
 # Main function
 main() {
   repo_path="."  # Current directory
-  output_file="index.html"
+  output_file="log.html"
   generate_html "$repo_path" "$output_file"
   echo "Report generated: $output_file"
 }

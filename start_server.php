@@ -14,8 +14,10 @@ class CustomHTTPRequestHandler {
 
     public function handleRequest($uri) {
         if ($uri == '/' || $uri == '') {
-            $this->checkAndGenerateReport();
-            $this->serveFile('/index.html');
+			$this->serveFile('/index.html');
+		} elseif ($url == '/log.html') {
+			$this->checkAndGenerateReport();
+			$this->serveFile('/log.html');
         } elseif (substr($uri, -4) === '.txt') {
             $this->serveTextFile($uri);
         } else {

@@ -93,7 +93,7 @@ def generate_html(repo_path, output_file):
 
 if __name__ == "__main__":
     repo_path = "."  # Current directory
-    output_file = 'index.html'
+    output_file = 'log.html'
     generate_html(repo_path, output_file)
     print(f"Report generated: {output_file}")
 
