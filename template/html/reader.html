@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Colorized Text</title>
+    <style>
+        {{STYLES}}
+    </style>
+</head>
+<body>
+    <div id="content"></div>
+    <div id="navigation">
+        <button id="prev" onclick="changePage(-1)">Previous</button>
+        <button id="next" onclick="changePage(1)">Next</button>
+    </div>
+    <script>
+        const pages = [
+            {{PAGES}}
+        ];
+        {{SCRIPT}}
+    </script>
+</body>
+</html>
+
