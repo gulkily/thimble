@@ -110,4 +110,4 @@ def commit_text_files(repo_path="."):
     print("Commit message:", commit_message)
 
 if __name__ == "__main__":
-    commit_text_files()
+    commit_text_files(repo_path="message")

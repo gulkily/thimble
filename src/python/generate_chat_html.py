@@ -24,7 +24,8 @@ def generate_chat_html(repo_path, output_file):
     CSS_STYLE = read_file('./template/css/chat_style.css')
 
     messages = []
-    for root, dirs, files in os.walk(os.path.join(repo_path, "message")):
+    # for root, dirs, files in os.walk(os.path.join(repo_path, "message")):
+    for root, dirs, files in os.walk(repo_path):
         for file in files:
             if file.endswith(".txt"):
                 file_path = os.path.join(root, file)
@@ -80,7 +81,7 @@ def generate_chat_html(repo_path, output_file):
         f.write(html_content)
 
 if __name__ == "__main__":
-    repo_path = "."  # Current directory
+    repo_path = "./message"
     output_file = 'chat.html'
     generate_chat_html(repo_path, output_file)
     print(f"Chat log generated: {output_file}")
