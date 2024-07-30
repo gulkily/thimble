@@ -147,9 +147,13 @@ class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
 def run_server(port, directory):
     os.chdir(directory)
     handler = CustomHTTPRequestHandler
-    with socketserver.TCPServer(("", port), handler) as httpd:
-        print(f"Serving HTTP on 0.0.0.0 port {port} (http://0.0.0.0:{port}/) ...")
-        httpd.serve_forever()
+    httpd = socketserver.TCPServer(("", port), handler)
+    try:
+         print(f"Serving HTTP on 0.0.0.0 port {port} (http://0.0.0.0:{port}/) ...")
+         httpd.serve_forever()
+    except KeyboardInterrupt:
+        pass
+    httpd.server_close()
 
 
 if __name__ == "__main__":
