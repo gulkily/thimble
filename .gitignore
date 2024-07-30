@@ -1,4 +1,7 @@
+chat.html
+log.html
 __pycache__/*
+node_modules
 message
 .idea
 .vscode

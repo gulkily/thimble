@@ -93,7 +93,7 @@ class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             print(
                 f"{html_file} is older than 60 seconds or does not exist. Running generate_report.py..."
             )
-            subprocess.run(["python", "generate_report.py"], check=True)
+            subprocess.run(["python", "src/python/generate_report.py"], check=True)
         else:
             print(f"{html_file} is up-to-date.")
 
@@ -106,7 +106,7 @@ class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             print(
                 f"{chat_html_file} is older than 60 seconds or does not exist. Running generate_chat_html.py..."
             )
-            subprocess.run(["python", "generate_chat_html.py"], check=True)
+            subprocess.run(["python", "src/python/generate_chat_html.py"], check=True)
         else:
             print(f"{chat_html_file} is up-to-date.")
 
