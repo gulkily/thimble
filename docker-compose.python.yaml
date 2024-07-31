@@ -1,0 +1,25 @@
+version: '3'
+
+services:
+    thimble:
+        build:
+            context: .
+            dockerfile: src/python/Dockerfile
+        ports:
+            - '8000:8000'
+        volumes:
+            - ./src/python:/app
+            - ./template/:/app/template
+            - ./index.html:/app/index.html
+            - ./message:/app/message
+            - ./shared-repo/.git:/app/.git
+        cap_add:
+            - SYS_PTRACE
+        # entrypoint: ["python", "start_server.py"]
+        # command: ["python", "start_server.py"]
+        environment:
+            - PYTHONIOENCODING=UTF-8
+            - PYTHONUNBUFFERED=1
+        extra_hosts:
+            - 'host.docker.internal:host-gateway'
+
