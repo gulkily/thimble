@@ -60,6 +60,7 @@ function gitCommand(command) {
 }
 
 async function commitTextFiles(repoPath = '.') {
+    currDir = process.cwd();
     try {
         process.chdir(repoPath);
 
@@ -106,9 +107,12 @@ async function commitTextFiles(repoPath = '.') {
         console.log("Commit message:", commitMessage);
     } catch (e) {
         console.error(`Error: ${e.message}`);
+    } finally {
+        process.chdir(currDir);
     }
 }
 
 if (require.main === module) {
-    commitTextFiles();
+    const repo_path = (process.argv.length >= 3) ? process.argv[2] : "."
+    commitTextFiles(repo_path);
 }
