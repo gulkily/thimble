@@ -1,62 +1,83 @@
+import sys
+import os
 import re
-import random
-import math
-import argparse
 from collections import Counter
+import nltk
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize, sent_tokenize
+import random
+import colorsys
 
-def generate_color(word):
-    hash_value = sum(ord(c) for c in word)
-    hue = hash_value % 360
-    saturation = 60 + (hash_value % 30)
-    lightness = 30 + (hash_value % 20)
-    return f"hsl({hue}, {saturation}%, {lightness}%)"
+# Download required NLTK data
+nltk.download('punkt')
+nltk.download('stopwords')
 
-def is_important_word(word, word_counts):
-    stopwords = set(['the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by'])
-    return word.lower() not in stopwords and word_counts[word.lower()] > 1
+def generate_color():
+    h = random.random()
+    s = 0.5 + random.random() * 0.5
+    v = 0.5 + random.random() * 0.3
+    r, g, b = [int(x * 255) for x in colorsys.hsv_to_rgb(h, s, v)]
+    return f"#{r:02x}{g:02x}{b:02x}"
 
-def colorize_text(text, word_counts):
-    words = re.findall(r'\b\w+\b', text)
-    colorized_words = []
-    for word in words:
-        if is_important_word(word, word_counts):
-            color = generate_color(word.lower())
-            colorized_words.append(f'<span style="color: {color};">{word}</span>')
-        else:
-            colorized_words.append(word)
-    return ' '.join(colorized_words)
+def process_text(input_file):
+    with open(input_file, 'r', encoding='utf-8') as f:
+        text = f.read()
 
-def create_html(input_file, output_file, words_per_page=200):
-    with open(input_file, 'r') as file:
-        text = file.read()
+    sentences = sent_tokenize(text)
+    words = word_tokenize(text.lower())
+    stop_words = set(stopwords.words('english'))
+    words = [word for word in words if word.isalnum() and word not in stop_words]
 
-    words = re.findall(r'\b\w+\b', text)
-    word_counts = Counter(word.lower() for word in words)
-    pages = [words[i:i+words_per_page] for i in range(0, len(words), words_per_page)]
+    word_freq = Counter(words)
+    total_words = len(words)
+    important_words = set([word for word, count in word_freq.items() if count / total_words > 0.001])
 
-    with open('template/html/reader.html', 'r') as template_file:
-        html_template = template_file.read()
+    word_colors = {word: generate_color() for word in important_words}
+    sentence_colors = [generate_color() for _ in sentences]
 
-    with open('template/css/reader.css', 'r') as css_file:
-        css_content = css_file.read()
+    processed_sentences = []
+    for sentence, bg_color in zip(sentences, sentence_colors):
+        words = word_tokenize(sentence)
+        processed_words = []
+        for word in words:
+            if word.lower() in important_words:
+                color = word_colors[word.lower()]
+                processed_words.append(f'<span style="color: {color}">{word}</span>')
+            else:
+                processed_words.append(word)
+        processed_sentence = ' '.join(processed_words)
+        processed_sentences.append(f'<p style="background-color: {bg_color}">{processed_sentence}</p>')
 
-    with open('template/js/reader.js', 'r') as js_file:
-        js_content = js_file.read()
+    return processed_sentences
 
-    colorized_pages = [colorize_text(' '.join(page), word_counts) for page in pages]
-    pages_json = ',\n'.join(f"'{page}'" for page in colorized_pages)
+def generate_html(processed_sentences, output_file):
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    
+    with open(os.path.join(script_dir, 'template/html/reader.html'), 'r') as f:
+        html_template = f.read()
+    
+    with open(os.path.join(script_dir, 'template/js/reader.js'), 'r') as f:
+        js_content = f.read()
+    
+    with open(os.path.join(script_dir, 'template/css/reader.css'), 'r') as f:
+        css_content = f.read()
 
-    html_content = html_template.replace('{{STYLES}}', css_content)
-    html_content = html_content.replace('{{SCRIPT}}', js_content)
-    html_content = html_content.replace('{{PAGES}}', pages_json)
+    content = ''.join(processed_sentences)
+    html_output = html_template.replace('{{content}}', content)
+    html_output = html_output.replace('{{js_content}}', js_content)
+    html_output = html_output.replace('{{css_content}}', css_content)
 
-    with open(output_file, 'w') as file:
-        file.write(html_content)
+    with open(output_file, 'w', encoding='utf-8') as f:
+        f.write(html_output)
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Convert text file to colorized HTML")
-    parser.add_argument("-i", "--input", default="input.txt", help="Input text file")
-    parser.add_argument("-o", "--output", default="reader.html", help="Output HTML file")
-    args = parser.parse_args()
+    if len(sys.argv) < 2:
+        print("Usage: python script.py input_file [output_file]")
+        sys.exit(1)
 
-    create_html(args.input, args.output)
+    input_file = sys.argv[1]
+    output_file = sys.argv[2] if len(sys.argv) > 2 else 'output.html'
+
+    processed_sentences = process_text(input_file)
+    generate_html(processed_sentences, output_file)
+    print(f"HTML file generated: {output_file}")

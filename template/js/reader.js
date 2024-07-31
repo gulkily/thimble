@@ -1,22 +1,33 @@
-let currentPage = 0;
+const content = `{{content}}`;
+const paragraphs = content.split('</p>').filter(p => p.trim() !== '').map(p => p + '</p>');
+let currentIndex = 0;
 
-function displayPage(pageNum) {
-    document.getElementById('content').innerHTML = pages[pageNum];
-    document.getElementById('prev').disabled = pageNum === 0;
-    document.getElementById('next').disabled = pageNum === pages.length - 1;
+function updateContent() {
+    document.getElementById('previous').innerHTML = currentIndex > 0 ? paragraphs[currentIndex - 1] : '';
+    document.getElementById('current').innerHTML = paragraphs[currentIndex];
+    document.getElementById('next').innerHTML = currentIndex < paragraphs.length - 1 ? paragraphs[currentIndex + 1] : '';
 }
 
-function changePage(delta) {
-    currentPage = Math.max(0, Math.min(currentPage + delta, pages.length - 1));
-    displayPage(currentPage);
+function nextPage() {
+    if (currentIndex < paragraphs.length - 1) {
+        currentIndex++;
+        updateContent();
+    }
 }
 
-document.addEventListener('keydown', function(event) {
-    if (event.key === 'ArrowLeft') {
-        changePage(-1);
-    } else if (event.key === 'ArrowRight') {
-        changePage(1);
+function previousPage() {
+    if (currentIndex > 0) {
+        currentIndex--;
+        updateContent();
+    }
+}
+
+document.addEventListener('keydown', (event) => {
+    if (event.key === 'ArrowRight') {
+        nextPage();
+    } else if (event.key === 'ArrowLeft') {
+        previousPage();
     }
 });
 
-displayPage(currentPage);
+updateContent();
