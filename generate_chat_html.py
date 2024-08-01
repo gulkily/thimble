@@ -17,6 +17,11 @@ def extract_metadata(content):
     hashtags = re.findall(r'#\w+', content)
     return author, hashtags
 
+def truncate_message(content, max_length=300):
+    if len(content) <= max_length:
+        return content, False
+    return content[:max_length] + "...", True
+
 def generate_chat_html(repo_path, output_file):
     repo = git.Repo(repo_path)
     HTML_TEMPLATE = read_file('./template/html/chat_page.html')
@@ -60,10 +65,16 @@ def generate_chat_html(repo_path, output_file):
     messages.sort(key=lambda x: x['timestamp'])
 
     chat_messages = []
-    for msg in messages:
+    for idx, msg in enumerate(messages):
+        truncated_content, is_truncated = truncate_message(msg['content'])
+        expand_link = f'<a href="#" class="expand-link" data-message-id="{idx}">{"Show More" if is_truncated else "Show Less"}</a>'
+        full_content = f'<div class="full-message" id="full-message-{idx}" style="display: none;">{msg["content"]}</div>' if is_truncated else ''
+
         chat_messages.append(MESSAGE_TEMPLATE.format(
             author=msg['author'],
-            content=msg['content'],
+            content=truncated_content,
+            full_content=full_content,
+            expand_link=expand_link,
             timestamp=msg['timestamp'].strftime('%Y-%m-%d %H:%M:%S'),
             hashtags=' '.join(msg['hashtags'])
         ))

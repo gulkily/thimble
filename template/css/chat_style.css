@@ -97,3 +97,12 @@ h1 {
     display: flex;
     flex-direction: column;
 }
+.expand-link {
+    color: #0066cc;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.full-message {
+    margin-top: 10px;
+}
