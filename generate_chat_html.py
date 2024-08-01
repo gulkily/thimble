@@ -68,6 +68,9 @@ def generate_chat_html(repo_path, output_file):
 			content = "Error reading message"
 			hashtags = []
 
+		# remove "author: foo" from content
+		content = re.sub(r'author:\s*.+', '', content, flags=re.IGNORECASE).strip()
+
 		messages.append({
 			'author': author,
 			'content': content,
@@ -78,12 +81,12 @@ def generate_chat_html(repo_path, output_file):
 	scan_directory(message_dir)
 
 	# Sort messages by timestamp in ascending order
-	messages.sort(key=lambda x: x['timestamp'])
+	messages.sort(key=lambda x: x['timestamp'], reverse=True)
 
 	chat_messages = []
 	for idx, msg in enumerate(messages):
 		truncated_content, is_truncated = truncate_message(msg['content'])
-		expand_link = f'<a href="#" class="expand-link" data-message-id="{idx}">{"Show More" if is_truncated else "Show Less"}</a>'
+		expand_link = f'<a href="#" class="expand-link" data-message-id="{idx}">{"Show More" if is_truncated else ""}</a>'
 		full_content = f'<div class="full-message" id="full-message-{idx}" style="display: none;">{msg["content"]}</div>' if is_truncated else ''
 
 		chat_messages.append(MESSAGE_TEMPLATE.format(
