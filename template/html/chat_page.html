@@ -11,13 +11,12 @@
 <body>
 	<div class="chat-container">
 		<h1>{title}</h1>
-		<div class="chat-messages">
-			<div class="chat-messages">
-				{chat_messages}
-			</div>
+		<div class="chat-messages" id="chat-messages">
+			{chat_messages}
 		</div>
+		<iframe name="abc" id="abc"></iframe>
 		<div class="message-form">
-			<form action="#" method="post">
+			<form action="/chat.html" method="post" target="abc">
 				<textarea name="message" placeholder="Type your message here..." required></textarea>
 				<button type="submit">Send</button>
 				<br>
