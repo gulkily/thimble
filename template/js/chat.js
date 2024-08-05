@@ -13,7 +13,44 @@ document.addEventListener('click', function(e) {
 	}
 });
 
-function NewChat (author, timestamp, content, full_content, expand_link, hashtags) {
+function NewChat() {
+	// Get form elements
+	var form = document.querySelector('form[action="/chat.html"]');
+	var messageInput = form.querySelector('textarea[name="message"]');
+	var authorInput = form.querySelector('input[name="author"]');
+
+	// Get form data
+	var message = messageInput.value;
+	var author = authorInput.value;
+
+	// Create FormData object
+	var formData = new FormData(form);
+
+	// Create and send XHR request
+	var xhr = new XMLHttpRequest();
+	xhr.open('POST', '/chat.html', true);
+	xhr.onload = function() {
+		if (xhr.status === 200) {
+			// Request successful, add the message to the chat
+			var timestamp = new Date().toLocaleString(); // You might want to get this from the server response
+			var addMessageToChatResult = AddMessageToChat(author, timestamp, message);
+
+			// Clear the message input
+			messageInput.value = '';
+		} else {
+			console.error('Request failed. Status:', xhr.status);
+		}
+	};
+	xhr.onerror = function() {
+		console.error('Request failed. Network error.');
+	};
+	xhr.send(formData);
+
+	// Prevent form from submitting normally
+	return false;
+}
+
+function AddMessageToChat (author, timestamp, content, full_content, expand_link, hashtags) {
 	if (document && document.getElementById) {
 		var chatMessages = document.getElementById('chat-messages');
 
@@ -76,8 +113,6 @@ function NewChat (author, timestamp, content, full_content, expand_link, hashtag
 		console.error("Document or getElementById not supported");
 	}
 }
-
-NewChat("John Doe", "2023-04-14 10:30", "Hello, world!", null, null, "#greeting #hello");
 
 function PingUrl (url, ele) { // loads arbitrary url via image or xhr
 // compatible with most js
