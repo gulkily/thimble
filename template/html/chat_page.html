@@ -14,9 +14,8 @@
 		<div class="chat-messages" id="chat-messages">
 			{chat_messages}
 		</div>
-		<iframe name="abc" id="abc"></iframe>
 		<div class="message-form">
-			<form action="/chat.html" method="post" target="abc">
+			<form action="/chat.html" method="post" onsubmit="return NewChat()">
 				<textarea name="message" placeholder="Type your message here..." required></textarea>
 				<button type="submit">Send</button>
 				<br>
