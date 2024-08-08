@@ -1,3 +1,5 @@
+chain for each user /author/person/ topic
+
 automated pull and push from multiple repos
 
 how to guide for what to do when things break
