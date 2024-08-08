@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thimble System Report</title>
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <header>
+        <h1>Thimble System Report</h1>
+    </header>
+    <main>
+        <section id="summary">
+            <h2>Summary</h2>
+            <table>
+                <tr>
+                    <th>Function</th>
+                    <th>JavaScript</th>
+                    <th>PHP</th>
+                    <th>Python</th>
+                    <th>Bash</th>
+                </tr>
+                {% for item in summary_data %}
+                <tr>
+                    <td>{{ item.function }}</td>
+                    <td class="{{ item.js.status }}">{{ item.js.summary }}</td>
+                    <td class="{{ item.php.status }}">{{ item.php.summary }}</td>
+                    <td class="{{ item.py.status }}">{{ item.py.summary }}</td>
+                    <td class="{{ item.sh.status }}">{{ item.sh.summary }}</td>
+                </tr>
+                {% endfor %}
+            </table>
+        </section>
+        <section id="details">
+            <h2>Detailed Report</h2>
+            {% for function in detailed_data %}
+            <div class="function-group">
+                <h3>{{ function.function }}</h3>
+                {% for script in function.scripts %}
+                <div class="script-details">
+                    <h4>{{ script.name }}</h4>
+                    <p class="summary {{ script.status }}">Summary: {{ script.summary }}</p>
+                    <div class="details">
+                        <h5>Details:</h5>
+                        <pre>{{ script.details }}</pre>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% endfor %}
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2023 Thimble Corporation. All rights reserved.</p>
+    </footer>
+    <script src="../js/script.js"></script>
+</body>
+</html>

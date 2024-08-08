@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <link rel="stylesheet" href="./template/css/styles.css">
+</head>
+<body>
+    <h1>{{ title }}</h1>
+    <h2>System Output Summary</h2>
+    <table>
+        <tr>
+            <th>Function</th>
+            <th>JavaScript</th>
+            <th>PHP</th>
+            <th>Python</th>
+            <th>Bash</th>
+        </tr>
+        {% for row in summary_data %}
+        <tr>
+            <td>{{ row.function }}</td>
+            <td class="{{ row.js.status }}">{{ row.js.summary }}</td>
+            <td class="{{ row.php.status }}">{{ row.php.summary }}</td>
+            <td class="{{ row.py.status }}">{{ row.py.summary }}</td>
+            <td class="{{ row.sh.status }}">{{ row.sh.summary }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h2>Detailed Output</h2>
+    {% for group in detailed_data %}
+    <div class="group">
+        <h3>{{ group.function }}</h3>
+        {% for script in group.scripts %}
+        <div class="script">
+            <h4>{{ script.name }}</h4>
+            <div class="summary {{ script.status }}">Summary: {{ script.summary }}</div>
+            <div class="details">
+                <h5>Details:</h5>
+                <pre>{{ script.output }}</pre>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endfor %}
+
+    <script src="./template/js/script.js"></script>
+</body>
+</html>

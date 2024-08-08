@@ -1,89 +1,95 @@
 import os
 import subprocess
 import time
+import asyncio
+import aiofiles
+from jinja2 import Environment, FileSystemLoader
 
-def run_script(script_name):
-    try:
-        print(f"[THIMBLE] Executing {script_name}...")
-        if script_name.endswith('.js'):
-            output = subprocess.check_output(['node', script_name], stderr=subprocess.STDOUT, universal_newlines=True)
-        elif script_name.endswith('.php'):
-            output = subprocess.check_output(['php', script_name], stderr=subprocess.STDOUT, universal_newlines=True)
-        elif script_name.endswith('.py'):
-            output = subprocess.check_output(['python', script_name], stderr=subprocess.STDOUT, universal_newlines=True)
-        elif script_name.endswith('.sh'):
-            output = subprocess.check_output(['bash', script_name], stderr=subprocess.STDOUT, universal_newlines=True)
-        else:
-            return f"[ERROR] Unsupported file type: {script_name}"
-        print(f"[THIMBLE] {script_name} execution completed.")
-        return output.strip()
-    except subprocess.CalledProcessError as e:
-        return f"[ERROR] Execution failed for {script_name}: {e.output}"
+async def run_script(script_name):
+	try:
+		if script_name.endswith('.js'):
+			proc = await asyncio.create_subprocess_exec('node', script_name, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
+		elif script_name.endswith('.php'):
+			proc = await asyncio.create_subprocess_exec('php', script_name, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
+		elif script_name.endswith('.py'):
+			proc = await asyncio.create_subprocess_exec('python', script_name, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
+		elif script_name.endswith('.sh'):
+			proc = await asyncio.create_subprocess_exec('bash', script_name, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
+		else:
+			return f"Unsupported file type: {script_name}", "failure"
 
-def generate_html():
-    scripts = [
-        'test_commit_files.js',
-        'test_commit_files.php',
-        'test_commit_files.py',
-        'test_generate_report.js',
-        'test_generate_report.php',
-        'test_generate_report.py',
-        'test_generate_report.sh',
-        'test_start_server.php',
-        'test_start_server.py'
-    ]
+		stdout, stderr = await proc.communicate()
+		if proc.returncode == 0:
+			return stdout.decode().strip(), "success"
+		else:
+			return f"Error running {script_name}: {stderr.decode()}", "failure"
+	except Exception as e:
+		return f"Error running {script_name}: {str(e)}", "failure"
 
-    html_content = """
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>THIMBLE System Status</title>
-        <style>
-            body { font-family: 'Courier New', monospace; line-height: 1.6; padding: 20px; background-color: #000; color: #0F0; }
-            h1 { color: #0F0; text-align: center; text-transform: uppercase; }
-            h2 { color: #0F0; border-bottom: 1px solid #0F0; }
-            pre { background-color: #001100; padding: 10px; border-radius: 5px; border: 1px solid #0F0; }
-            .summary { font-weight: bold; margin-bottom: 10px; }
-            .details { margin-bottom: 20px; }
-            .status { color: #FF0; }
-        </style>
-    </head>
-    <body>
-        <h1>THIMBLE System Status</h1>
-    """
+async def generate_html():
+	scripts = {
+		'Commit Files': ['test_commit_files.js', 'test_commit_files.php', 'test_commit_files.py'],
+		'Generate Report': ['test_generate_report.js', 'test_generate_report.php', 'test_generate_report.py', 'test_generate_report.sh'],
+		'Start Server': ['test_start_server.php', 'test_start_server.py']
+	}
 
-    print("[THIMBLE] Initiating system status report generation...")
-    total_scripts = len(scripts)
-    for index, script in enumerate(scripts, 1):
-        print(f"[THIMBLE] Processing script {index} of {total_scripts}: {script}")
-        output = run_script(script)
-        summary = output.split('\n')[0] if output else "No output"
+	env = Environment(loader=FileSystemLoader('./template/html'))
+	template = env.get_template('report_template.html')
 
-        html_content += f"""
-        <h2>{script}</h2>
-        <div class="summary">Summary: {summary}</div>
-        <div class="details">
-            <h3>Details:</h3>
-            <pre>{output}</pre>
-        </div>
-        """
+	summary_data = []
+	detailed_data = []
 
+	for function, script_list in scripts.items():
+		function_summary = {"function": function}
+		function_details = {"function": function, "scripts": []}
 
+		for ext in ['.js', '.php', '.py', '.sh']:
+			script = next((s for s in script_list if s.endswith(ext)), None)
+			if script:
+				print(f"Running {script}...")
+				output, status = await run_script(script)
 
-    html_content += """
-    </body>
-    </html>
-    """
+				#summary = output.split('\n')[0] if output else "No output"
+				#if output contains the string "error", set status to "failed"
+				# otherwise, set status to "success"
+				# if output is empty, set status to "n/a"
+				# below if statements were generated by copilot
+				# begin by checking if output is empty
+				if not output:
+					summary = "No output"
+					status = "n/a"
+				# check if output contains the string "error" (case insensitive)
+				elif "error" in output.lower():
+					status = "failed"
+					summary = "failed"
+				else:
+					status = "success"
+					summary = "success"
 
-    with open('system.html', 'w') as f:
-        f.write(html_content)
+				function_summary[ext[1:]] = {"summary": summary, "status": status}
+				function_details["scripts"].append({
+					"name": script,
+					"summary": summary,
+					"status": status,
+					"details": output
+				})
+			else:
+				function_summary[ext[1:]] = {"summary": "N/A", "status": "n/a"}
+
+		summary_data.append(function_summary)
+		detailed_data.append(function_details)
+
+	html_content = template.render(summary_data=summary_data, detailed_data=detailed_data)
+
+	async with aiofiles.open('system.html', 'w') as f:
+		await f.write(html_content)
+
+async def main():
+	start_time = time.time()
+	print("Initiating system_report.html generation...")
+	await generate_html()
+	end_time = time.time()
+	print(f"system_report.html has been generated successfully. Time elapsed: {end_time - start_time:.2f} seconds.")
 
 if __name__ == "__main__":
-    print("[THIMBLE] Initiating system status report...")
-    start_time = time.time()
-    generate_html()
-    end_time = time.time()
-    print(f"[THIMBLE] system.html has been generated. Time elapsed: {end_time - start_time:.2f} seconds.")
-    print("[THIMBLE] Mission accomplished. Terminating process.")
+	asyncio.run(main())
