@@ -68,7 +68,8 @@ function runTests(script) {
 const scripts = [
     'python3 commit_files.py',
     'node commit_files.js',
-    'php commit_files.php'
+    'php commit_files.php',
+    'perl commit_files.pl'
 ];
 
 scripts.forEach(runTests);
