@@ -67,7 +67,8 @@ $scripts = [
     'python3 commit_files.py',
     'node commit_files.js',
     'php commit_files.php',
-    'php commit_files.pl'
+    'php commit_files.pl',
+	'ruby commit_files.rb'
 ];
 
 foreach ($scripts as $script) {

@@ -67,7 +67,8 @@ if __name__ == "__main__":
         "python3 commit_files.py",
         "node commit_files.js",
         "php commit_files.php",
-        "perl commit_files.pl"
+        "perl commit_files.pl",
+        "ruby commit_files.rb"
     ]
 
     for script in scripts:
