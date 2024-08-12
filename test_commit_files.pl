@@ -1,4 +1,8 @@
 #!/usr/bin/perl
+
+# test_commit_files.pl
+# to run: perl test_commit_files.pl
+
 use strict;
 use warnings;
 use Digest::SHA qw(sha256_hex);
