@@ -1,4 +1,8 @@
 #!/usr/bin/perl
+
+# generate_chat_html.pl
+# to run: perl generate_chat_html.pl
+
 use strict;
 use warnings;
 use File::Find;
