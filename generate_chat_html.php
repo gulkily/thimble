@@ -56,15 +56,27 @@ function scan_directory($directory, &$messages, $repo_path) {
     }
 }
 
+function get_commit_timestamp($file_path) {
+    $command = "git log -1 --format=%ct -- " . escapeshellarg($file_path);
+    $output = trim(shell_exec($command));
+    return $output ? (int)$output : time();
+}
+
+function read_file_with_encoding($file_path) {
+    $content = file_get_contents($file_path);
+    $encoding = mb_detect_encoding($content, ['UTF-8', 'ISO-8859-1', 'ASCII'], true);
+    return mb_convert_encoding($content, 'UTF-8', $encoding);
+}
+
 function process_file($file_path, &$messages, $repo_path) {
+    global $DEBUG;
     debug_print("Processing file: $file_path");
     $relative_path = str_replace($repo_path . '/', '', $file_path);
 
-    // Note: Git functionality is not implemented in this PHP version
-    $commit_timestamp = time(); // Using current time as a placeholder
+    $commit_timestamp = get_commit_timestamp($file_path);
 
     try {
-        $content = file_get_contents($file_path);
+        $content = read_file_with_encoding($file_path);
         list($author, $hashtags) = extract_metadata($content);
     } catch (Exception $e) {
         debug_print("Error reading file $file_path: " . $e->getMessage());
