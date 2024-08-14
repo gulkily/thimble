@@ -1,6 +1,31 @@
 # commit_files.py
 # to run: python3 commit_files.py
 
+# File: commit_files.py
+# Description: A script to automatically commit text files and their metadata to a Git repository.
+#
+# Dependencies:
+# - Python 3.x
+# - Git (installed and configured)
+#
+# Main functions:
+# - calculate_file_hash(file_path): Calculates SHA256 hash of a file
+# - extract_metadata(content, file_path): Extracts metadata from file content
+# - store_metadata(file_path, metadata): Stores metadata as JSON file
+# - run_git_command(command): Executes Git commands
+# - commit_text_files(repo_path="."): Main function to process and commit files
+#
+# Usage: python3 commit_files.py
+#
+# The script does the following:
+# 1. Finds all modified and untracked .txt files in the repository
+# 2. Extracts metadata (author, title, hashtags, file hash) from each file
+# 3. Stores metadata in JSON files in a 'metadata' directory
+# 4. Adds all .txt files and metadata files to Git staging
+# 5. Creates a commit with an auto-generated message
+#
+# Note: This script should be run from within a Git repository
+
 import os
 import re
 import subprocess

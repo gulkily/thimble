@@ -1,6 +1,30 @@
 # generate_report.py
 # to run: python3 generate_report.py
 
+# generate_report.py
+# Description: Generates an HTML report of message files in a Git repository
+# Dependencies: os, re, datetime, git, gnupg, traceback, chardet
+# Input: None (uses current directory as repo_path)
+# Output: log.html file in the current directory
+#
+# This script does the following:
+# 1. Walks through the "message" directory in the repo
+# 2. Reads up to 100 .txt files
+# 3. Extracts metadata (author, hashtags) from each file
+# 4. Retrieves Git commit information for each file
+# 5. Generates an HTML report using templates (page.html, page_row.html, webmail.css)
+# 6. Sorts the files by commit timestamp
+# 7. Writes the report to log.html
+#
+# Key functions:
+# - read_file(file_path): Reads and returns content of a file
+# - extract_metadata(content): Extracts author and hashtags from file content
+# - generate_html(repo_path, output_file): Main function to generate the HTML report
+#
+# Note: Requires template files (page.html, page_row.html, webmail.css) in ./template directory
+#
+# To run: python3 generate_report.py
+
 import os
 import re
 from datetime import datetime
