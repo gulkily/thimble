@@ -1,12 +1,12 @@
-# test_update_github.py
-# to run: python3 test_update_github.py
+# test_github_update.py
+# to run: python3 test_github_update.py
 
 import os
 import subprocess
 import random
 import string
 from datetime import datetime
-import update_github
+import github_update
 
 def random_string(length=8):
     return ''.join(random.choices(string.ascii_lowercase + string.digits, k=length))
@@ -33,17 +33,17 @@ def check_git_log():
     return "Auto-commit" in result.stdout
 
 def run_tests():
-    print("Testing update_github.py")
+    print("Testing github_update.py")
 
     # Test 1: No changes to update
-    update_github.update_github()
+    github_update.github_update()
     print("Test 1 passed: No changes to update")
 
     # Test 2: Local changes
     file1 = create_test_file("Test content for local changes")
     run_git_command("git add .")
     run_git_command('git commit -m "Test commit"')
-    update_github.update_github()
+    github_update.github_update()
     assert check_git_log(), "Git commit not found"
     print("Test 2 passed: Local changes pushed")
 
@@ -54,7 +54,7 @@ def run_tests():
     run_git_command('git commit -m "Remote test commit"')
     run_git_command("git push")
     run_git_command("git reset --hard HEAD~1")
-    update_github.update_github()
+    github_update.github_update()
     assert "Remote test commit" in run_git_command("git log -1 --pretty=format:%s")[0], "Remote changes not merged"
     print("Test 3 passed: Remote changes merged")
 
@@ -69,11 +69,11 @@ def run_tests():
     run_git_command('git commit -m "Remote diverged commit"')
     run_git_command("git push")
     run_git_command("git reset --hard HEAD~1")
-    update_github.update_github()
+    github_update.github_update()
     assert "Remote diverged commit" in run_git_command("git log -1 --pretty=format:%s")[0], "Diverged history not resolved"
     print("Test 4 passed: Diverged history resolved")
 
-    print("All tests passed for update_github.py")
+    print("All tests passed for github_update.py")
 
 if __name__ == "__main__":
     run_tests()

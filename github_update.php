@@ -1,6 +1,6 @@
 <?php
-// update_github.php
-// to run: php update_github.php [--debug]
+// github_update.php
+// to run: php github_update.php [--debug]
 
 $DEBUG = false;
 
@@ -107,7 +107,7 @@ function push_changes() {
     echo "Local changes pushed successfully.\n";
 }
 
-function update_github() {
+function github_update() {
     // Check for uncommitted changes
     if (check_for_uncommitted_changes()) {
         stash_changes();
@@ -139,4 +139,4 @@ function update_github() {
 $options = getopt("", ["debug"]);
 $DEBUG = isset($options["debug"]);
 
-update_github();
+github_update();

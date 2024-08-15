@@ -1,6 +1,6 @@
 #!/usr/bin/env node
-// update_github.js
-// to run: node update_github.js [--debug]
+// github_update.js
+// to run: node github_update.js [--debug]
 
 const { execSync } = require('child_process');
 const fs = require('fs');

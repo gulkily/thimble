@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
-# update_github.pl
-# to run: perl update_github.pl [--debug]
+# github_update.pl
+# to run: perl github_update.pl [--debug]
 
 use strict;
 use warnings;
@@ -111,7 +111,7 @@ sub push_changes {
     print "Local changes pushed successfully.\n";
 }
 
-sub update_github {
+sub github_update {
     my $stashed = 0;
     if (check_for_uncommitted_changes()) {
         stash_changes();
@@ -135,4 +135,4 @@ sub update_github {
 
 GetOptions("debug" => \$DEBUG) or die("Error in command line arguments\n");
 
-update_github();
+github_update();

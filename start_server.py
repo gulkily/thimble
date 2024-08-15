@@ -57,8 +57,8 @@ class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
 			self.wfile.write(b"Message saved successfully")
 			# commit the message to the git repository using commit_files.py
 			subprocess.run(['python', 'commit_files.py', 'message'], check=True)
-			# update the GitHub repository using update_github.py
-			subprocess.run(['python', 'update_github.py'], check=True)
+			# update the GitHub repository using github_update.py
+			subprocess.run(['python', 'github_update.py'], check=True)
 			# redirect back to chat.html
 			self.wfile.write(b'<meta http-equiv="refresh" content="1;url=/chat.html">')
 

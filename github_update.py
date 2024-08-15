@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-# update_github.py
-# to run: python3 update_github.py [--debug]
+# github_update.py
+# to run: python3 github_update.py [--debug]
 
 import os
 import subprocess
@@ -93,7 +93,7 @@ def push_changes():
         sys.exit(1)
     print("Local changes pushed successfully.")
 
-def update_github():
+def github_update():
     # Check for uncommitted changes
     if check_for_uncommitted_changes():
         stash_changes()
@@ -124,4 +124,4 @@ if __name__ == "__main__":
 
     DEBUG = args.debug
 
-    update_github()
+    github_update()

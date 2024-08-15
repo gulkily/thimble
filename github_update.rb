@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
-# update_github.rb
-# to run: ruby update_github.rb [--debug]
+# github_update.rb
+# to run: ruby github_update.rb [--debug]
 
 require 'open3'
 require 'optparse'
@@ -106,7 +106,7 @@ def push_changes
   puts "Local changes pushed successfully."
 end
 
-def update_github
+def github_update
   # Check for uncommitted changes
   stashed = if check_for_uncommitted_changes
               stash_changes
@@ -132,11 +132,11 @@ end
 
 if __FILE__ == $PROGRAM_NAME
   OptionParser.new do |opts|
-    opts.banner = "Usage: ruby update_github.rb [options]"
+    opts.banner = "Usage: ruby github_update.rb [options]"
     opts.on("--debug", "Enable debug output") do
       DEBUG = true
     end
   end.parse!
 
-  update_github
+  github_update
 end
