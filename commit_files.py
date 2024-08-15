@@ -29,6 +29,7 @@
 import os
 import re
 import subprocess
+import sys
 from datetime import datetime
 import json
 import hashlib
@@ -80,6 +81,7 @@ def run_git_command(command):
     return output.decode('utf-8').strip(), error.decode('utf-8').strip()
 
 def commit_text_files(repo_path="."):
+    curr_dir = os.getcwd()
     os.chdir(repo_path)
 
     # Check if there are any changes
@@ -102,13 +104,12 @@ def commit_text_files(repo_path="."):
     # Process each file and store metadata
     metadata_files = []
     for file_path in txt_files:
-        full_path = os.path.join(repo_path, file_path)
         try:
-            with open(full_path, 'r', encoding='utf-8') as f:
+            with open(file_path, 'r', encoding='utf-8') as f:
                 content = f.read()
 
-            metadata = extract_metadata(content, full_path)
-            metadata_file = store_metadata(full_path, metadata)
+            metadata = extract_metadata(content, file_path)
+            metadata_file = store_metadata(file_path, metadata)
             metadata_files.append(metadata_file)
 
             print(f"File: {file_path}")
@@ -133,6 +134,8 @@ def commit_text_files(repo_path="."):
 
     print(f"Committed {len(txt_files)} text files and their metadata.")
     print("Commit message:", commit_message)
+    os.chdir(curr_dir)
 
 if __name__ == "__main__":
-    commit_text_files()
+    repo_path = sys.argv[1] if len(sys.argv) > 1 else "."
+    commit_text_files(repo_path=repo_path)
