@@ -3,123 +3,223 @@
 # start_server.php
 # to run: php start_server.php
 
-# start_server: v1
+# start_server: v3
 
 class CustomHTTPRequestHandler {
-    private $directory;
+	private $directory;
 
-    public function __construct($directory = null) {
-        $this->directory = $directory ?: getcwd();
-    }
+	public function __construct($directory = null) {
+		$this->directory = $directory ?: getcwd();
+	}
 
-    public function handleRequest($uri) {
-        if ($uri == '/' || $uri == '') {
+	public function handleRequest($uri, $method) {
+		if ($uri == '/' || $uri == '') {
 			$this->serveFile('/index.html');
-		} elseif ($url == '/log.html') {
+		} elseif ($uri == '/log.html') {
 			$this->checkAndGenerateReport();
 			$this->serveFile('/log.html');
-        } elseif (substr($uri, -4) === '.txt') {
-            $this->serveTextFile($uri);
-        } else {
-            $this->serveFile($uri);
-        }
-    }
+		} elseif ($uri == '/chat.html') {
+			$this->checkAndGenerateChatHtml();
+			$this->serveFile('/chat.html');
+		} elseif ($uri == '/api/github_update') {
+			$this->triggerGithubUpdate();
+		} elseif (substr($uri, -4) === '.txt') {
+			$this->serveTextFile($uri);
+		} elseif ($method === 'POST' && $uri == '/chat.html') {
+			$this->handleChatPost();
+		} else {
+			$this->serveFile($uri);
+		}
+	}
 
-    private function checkAndGenerateReport() {
-        $reportFile = $this->directory . '/report.txt';
-        if (!file_exists($reportFile) || (time() - filemtime($reportFile)) > 3600) {
-            $this->generateReport();
-        }
-    }
+	private function checkAndGenerateReport() {
+		$htmlFile = $this->directory . '/log.html';
+		if (!file_exists($htmlFile) || (time() - filemtime($htmlFile)) > 60) {
+			echo "log.html is older than 60 seconds or does not exist. Running generate_report.py...\n";
+			exec('python generate_report.py');
+		} else {
+			echo "log.html is up-to-date.\n";
+		}
+	}
 
-    private function generateReport() {
-        $reportContent = "Report generated at: " . date('Y-m-d H:i:s') . "\n\n";
-        $reportContent .= "Files in directory:\n";
+	private function checkAndGenerateChatHtml() {
+		$chatHtmlFile = $this->directory . '/chat.html';
+		if (!file_exists($chatHtmlFile) || (time() - filemtime($chatHtmlFile)) > 60) {
+			echo "chat.html is older than 60 seconds or does not exist. Running generate_chat_html.py...\n";
+			exec('python generate_chat_html.py');
+		} else {
+			echo "chat.html is up-to-date.\n";
+		}
+	}
 
-        $files = scandir($this->directory);
-        foreach ($files as $file) {
-            if ($file != '.' && $file != '..') {
-                $reportContent .= "- $file\n";
-            }
-        }
+	private function triggerGithubUpdate() {
+		header('Content-Type: text/html');
+		echo "Update triggered successfully";
+		exec('python github_update.py');
+	}
 
-        file_put_contents($this->directory . '/report.txt', $reportContent);
-    }
+	private function handleChatPost() {
+		$author = $_POST['author'] ?? '';
+		$message = $_POST['message'] ?? '';
 
-    private function serveFile($uri) {
-        $filePath = $this->directory . $uri;
-        if (file_exists($filePath) && !is_dir($filePath)) {
-            $mimeType = $this->getMimeType($filePath);
-            header("Content-Type: $mimeType");
-            readfile($filePath);
-        } else {
-            $this->sendNotFound();
-        }
-    }
+		if ($author && $message) {
+			$this->saveMessage($author, $message);
+			header('Content-Type: text/html');
+			echo "Message saved successfully";
+			exec('python commit_files.py message');
+			exec('python github_update.py');
+			echo '<meta http-equiv="refresh" content="1;url=/chat.html">';
+		} else {
+			header("HTTP/1.0 400 Bad Request");
+			echo "Bad Request: Missing author or message";
+		}
+	}
 
-    private function serveTextFile($uri) {
-        $filePath = $this->directory . $uri;
-        if (file_exists($filePath) && !is_dir($filePath)) {
-            header("Content-Type: text/plain");
-            readfile($filePath);
-        } else {
-            $this->sendNotFound();
-        }
-    }
+	private function saveMessage($author, $message) {
+		$today = date('Y-m-d');
+		$directory = $this->directory . "/message/$today";
+		if (!is_dir($directory)) {
+			mkdir($directory, 0777, true);
+		}
 
-    private function sendNotFound() {
-        header("HTTP/1.0 404 Not Found");
-        echo "404 Not Found";
-    }
+		$title = $this->generateTitle($message);
+		$filename = "$title.txt";
+		$filepath = "$directory/$filename";
 
-    private function getMimeType($filePath) {
-        $mimeTypes = [
-            'txt' => 'text/plain',
-            'html' => 'text/html',
-            'css' => 'text/css',
-            'js' => 'application/javascript',
-            'json' => 'application/json',
-            'png' => 'image/png',
-            'jpg' => 'image/jpeg',
-            'gif' => 'image/gif',
-        ];
+		file_put_contents($filepath, $message . "\n\nauthor: $author");
+	}
 
-        $extension = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
-        return isset($mimeTypes[$extension]) ? $mimeTypes[$extension] : 'application/octet-stream';
-    }
+	private function generateTitle($message) {
+		$words = array_slice(explode(' ', $message), 0, 5);
+		$title = implode('_', $words);
+		$title = preg_replace('/[^a-zA-Z0-9_-]/', '', $title);
+		if (empty($title)) {
+			$title = substr(str_shuffle('abcdefghijklmnopqrstuvwxyz'), 0, 10);
+		}
+		return $title;
+	}
+
+	private function serveFile($uri) {
+		$filePath = $this->directory . $uri;
+		if (file_exists($filePath) && !is_dir($filePath)) {
+			$mimeType = $this->getMimeType($filePath);
+			header("Content-Type: $mimeType");
+			readfile($filePath);
+		} else {
+			$this->sendNotFound();
+		}
+	}
+
+	private function serveTextFile($uri) {
+		$filePath = $this->directory . $uri;
+		if (file_exists($filePath) && !is_dir($filePath)) {
+			$content = file_get_contents($filePath);
+			$htmlContent = $this->generateHtmlForTextFile(basename($filePath), $content);
+			header("Content-Type: text/html; charset=utf-8");
+			echo $htmlContent;
+		} else {
+			$this->sendNotFound();
+		}
+	}
+
+	private function generateHtmlForTextFile($filename, $content) {
+		$escapedContent = htmlspecialchars($content);
+		return <<<HTML
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>$filename</title>
+            <style>
+                body { font-family: Arial, sans-serif; line-height: 1.6; padding: 20px; }
+                pre { background-color: #f4f4f4; padding: 15px; border-radius: 5px; white-space: pre-wrap; word-wrap: break-word; }
+            </style>
+        </head>
+        <body>
+            <h1>$filename</h1>
+            <pre>$escapedContent</pre>
+        </body>
+        </html>
+        HTML;
+	}
+
+	private function sendNotFound() {
+		header("HTTP/1.0 404 Not Found");
+		echo "404 Not Found";
+	}
+
+	private function getMimeType($filePath) {
+		$mimeTypes = [
+			'txt' => 'text/plain',
+			'html' => 'text/html',
+			'css' => 'text/css',
+			'js' => 'application/javascript',
+			'json' => 'application/json',
+			'png' => 'image/png',
+			'jpg' => 'image/jpeg',
+			'gif' => 'image/gif',
+		];
+
+		$extension = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
+		return isset($mimeTypes[$extension]) ? $mimeTypes[$extension] : 'application/octet-stream';
+	}
+}
+
+function isPortInUse($port) {
+	$connection = @fsockopen('localhost', $port);
+	if (is_resource($connection)) {
+		fclose($connection);
+		return true;
+	}
+	return false;
+}
+
+function findAvailablePort($startPort) {
+	$port = $startPort;
+	while (isPortInUse($port)) {
+		$port++;
+	}
+	return $port;
 }
 
 function runServer($port, $directory) {
-    $host = '0.0.0.0';
-    echo "Starting server on http://$host:$port\n";
-    echo "Serving directory: $directory\n";
+	$host = '0.0.0.0';
+	echo "Starting server on http://$host:$port\n";
+	echo "Serving directory: $directory\n";
 
-    $command = sprintf(
-        'php -S %s:%d -t %s %s',
-        $host,
-        $port,
-        escapeshellarg($directory),
-        escapeshellarg(__FILE__)
-    );
+	$command = sprintf(
+		'php -S %s:%d -t %s %s',
+		$host,
+		$port,
+		escapeshellarg($directory),
+		escapeshellarg(__FILE__)
+	);
 
-    passthru($command);
+	passthru($command);
 }
 
 // Parse command line arguments
-$port = 8000;
-$directory = getcwd();
-
 $options = getopt("p:d:", ["port:", "directory:"]);
-if (isset($options['p'])) $port = $options['p'];
-if (isset($options['port'])) $port = $options['port'];
-if (isset($options['d'])) $directory = $options['d'];
-if (isset($options['directory'])) $directory = $options['directory'];
+$port = $options['p'] ?? $options['port'] ?? null;
+$directory = $options['d'] ?? $options['directory'] ?? getcwd();
+
+if ($port === null) {
+	$port = 8000;
+	while (isPortInUse($port)) {
+		$port = findAvailablePort($port + 1);
+		echo "Trying port $port...\n";
+	}
+} elseif (isPortInUse($port)) {
+	echo "Port $port is already in use.\n";
+	exit(1);
+}
 
 // Run the server
 runServer($port, $directory);
 
 // Handle incoming requests
 if (php_sapi_name() === 'cli-server') {
-    $handler = new CustomHTTPRequestHandler($directory);
-    $handler->handleRequest($_SERVER['REQUEST_URI']);
+	$handler = new CustomHTTPRequestHandler($directory);
+	$handler->handleRequest($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD']);
 }
