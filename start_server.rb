@@ -1,12 +1,41 @@
 # start_server.rb
 # to run: ruby start_server.rb
 
-# start_server: v1
+
+# Outline:
+# 1. Import required libraries
+# 2. Define CustomHTTPHandler class
+#    - Handle GET requests
+#    - Handle POST requests
+#    - Serve text files
+#    - Generate and update reports
+# 3. Define helper functions
+#    - Check port availability
+#    - Find available port
+#    - Run server
+# 4. Parse command-line options
+# 5. Start the server
+
+# Functionality:
+# This script starts a web server with the following features:
+# - Serves static files from a specified directory
+# - Handles custom routes for specific pages (/, /log.html, /chat.html)
+# - Provides an API endpoint for GitHub updates
+# - Serves text files with HTML formatting
+# - Handles chat message submissions
+# - Automatically generates and updates log and chat HTML files
+# - Finds an available port if the specified port is in use
+# - Allows customization of port and directory via command-line options
+
+# start_server: v3
 
 require 'webrick'
 require 'optparse'
 require 'time'
 require 'cgi'
+require 'uri'
+require 'fileutils'
+require 'securerandom'
 
 class CustomHTTPHandler < WEBrick::HTTPServlet::FileHandler
   def initialize(server, root)
@@ -15,17 +44,78 @@ class CustomHTTPHandler < WEBrick::HTTPServlet::FileHandler
   end
 
   def do_GET(req, res)
-    if req.path == '/'
+    case req.path
+    when '/'
+      super
+    when '/log.html'
       check_and_generate_report
       super
-    elsif req.path == '/log.html'
-      check_and_generate_report
+    when '/chat.html'
+      check_and_generate_chat_html
       super
-    elsif req.path.end_with?('.txt')
-      serve_text_file(req, res)
+    when '/api/github_update'
+      res.status = 200
+      res['Content-Type'] = 'text/html'
+      res.body = "Update triggered successfully"
+      system('ruby github_update.rb')
     else
-      super
+      if req.path.end_with?('.txt')
+        serve_text_file(req, res)
+      else
+        super
+      end
     end
+  end
+
+  def do_POST(req, res)
+    if req.path == '/chat.html'
+      handle_chat_post(req, res)
+    else
+      res.status = 405
+      res.body = "Method Not Allowed"
+    end
+  end
+
+  def handle_chat_post(req, res)
+    params = CGI.parse(req.body)
+    author = params['author']&.first || ''
+    message = params['message']&.first || ''
+
+    if !author.empty? && !message.empty?
+      save_message(author, message)
+      res.status = 200
+      res['Content-Type'] = 'text/html'
+      res.body = "Message saved successfully"
+      system('ruby commit_files.rb message')
+      system('ruby github_update.rb')
+      res.body += '<meta http-equiv="refresh" content="1;url=/chat.html">'
+    else
+      res.status = 400
+      res.body = "Bad Request: Missing author or message"
+    end
+  end
+
+  def save_message(author, message)
+    today = Time.now.strftime('%Y-%m-%d')
+    directory = File.join(@root, 'message', today)
+    FileUtils.mkdir_p(directory)
+
+    title = generate_title(message)
+    filename = "#{title}.txt"
+    filepath = File.join(directory, filename)
+
+    File.open(filepath, 'w', encoding: 'utf-8') do |f|
+      f.puts message
+      f.puts "\n\nauthor: #{author}"
+    end
+  end
+
+  def generate_title(message)
+    words = message.split.take(5)
+    title = words.join('_')
+    title = title.gsub(/[^0-9A-Za-z_-]/, '')
+    title = SecureRandom.alphanumeric(10) if title.empty?
+    title
   end
 
   def check_and_generate_report
@@ -35,6 +125,16 @@ class CustomHTTPHandler < WEBrick::HTTPServlet::FileHandler
       system('ruby generate_report.rb')
     else
       puts "#{html_file} is up-to-date."
+    end
+  end
+
+  def check_and_generate_chat_html
+    chat_html_file = File.join(@root, 'chat.html')
+    if !File.exist?(chat_html_file) || Time.now - File.mtime(chat_html_file) > 60
+      puts "#{chat_html_file} is older than 60 seconds or does not exist. Running generate_chat_html.rb..."
+      system('ruby generate_chat_html.rb')
+    else
+      puts "#{chat_html_file} is up-to-date."
     end
   end
 
@@ -67,6 +167,19 @@ class CustomHTTPHandler < WEBrick::HTTPServlet::FileHandler
   end
 end
 
+def is_port_in_use?(port)
+  TCPServer.new('localhost', port).close
+  false
+rescue Errno::EADDRINUSE
+  true
+end
+
+def find_available_port(start_port)
+  port = start_port
+  port += 1 while is_port_in_use?(port)
+  port
+end
+
 def run_server(port, directory)
   Dir.chdir(directory)
   server = WEBrick::HTTPServer.new(Port: port, DocumentRoot: directory)
@@ -75,6 +188,9 @@ def run_server(port, directory)
   trap('INT') { server.shutdown }
   puts "Serving HTTP on 0.0.0.0 port #{port} (http://0.0.0.0:#{port}/) ..."
   server.start
+rescue Errno::EADDRINUSE
+  puts "Port #{port} is already in use."
+  false
 end
 
 if __FILE__ == $PROGRAM_NAME
@@ -85,8 +201,17 @@ if __FILE__ == $PROGRAM_NAME
     opts.on("-d", "--directory DIR", String, "Directory to serve (default: current directory)") { |d| options[:directory] = d }
   end.parse!
 
-  port = options[:port] || 8000
   directory = options[:directory] || Dir.pwd
 
-  run_server(port, directory)
+  if options[:port]
+    unless run_server(options[:port], directory)
+      puts "Failed to start server on specified port #{options[:port]}."
+    end
+  else
+    port = 8000
+    until run_server(port, directory)
+      port = find_available_port(port + 1)
+      puts "Trying port #{port}..."
+    end
+  end
 end
