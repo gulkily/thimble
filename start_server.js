@@ -1,13 +1,15 @@
 // start_server.js
 // to run: node start_server.js
 
-// # start_server: v1
+// start_server: v3
 
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const { exec } = require('child_process');
 const { escape } = require('html-escaper');
+const querystring = require('querystring');
+const { DateTime } = require('luxon');
 
 class CustomHTTPRequestHandler {
   constructor(req, res) {
@@ -17,11 +19,26 @@ class CustomHTTPRequestHandler {
   }
 
   handleRequest() {
+    if (this.req.method === 'GET') {
+      this.handleGet();
+    } else if (this.req.method === 'POST') {
+      this.handlePost();
+    } else {
+      this.sendError(405, "Method Not Allowed");
+    }
+  }
+
+  handleGet() {
     if (this.req.url === '/') {
       this.serveFile('index.html');
     } else if (this.req.url === '/log.html') {
       this.checkAndGenerateReport();
       this.serveFile('log.html');
+    } else if (this.req.url === '/chat.html') {
+      this.checkAndGenerateChatHtml();
+      this.serveFile('chat.html');
+    } else if (this.req.url === '/api/github_update') {
+      this.handleGithubUpdate();
     } else if (this.req.url.endsWith('.txt')) {
       this.serveTextFile();
     } else {
@@ -29,24 +46,106 @@ class CustomHTTPRequestHandler {
     }
   }
 
+  handlePost() {
+    if (this.req.url === '/chat.html') {
+      this.handleChatPost();
+    } else {
+      this.sendError(405, "Method Not Allowed");
+    }
+  }
+
+  handleChatPost() {
+    let body = '';
+    this.req.on('data', chunk => {
+      body += chunk.toString();
+    });
+    this.req.on('end', () => {
+      const params = querystring.parse(body);
+      const author = params.author || '';
+      const message = params.message || '';
+
+      if (author && message) {
+        this.saveMessage(author, message);
+        this.res.writeHead(200, { 'Content-Type': 'text/html' });
+        this.res.end("Message saved successfully<meta http-equiv=\"refresh\" content=\"1;url=/chat.html\">");
+
+        // Commit the message and update GitHub
+        exec('python3 commit_files.py message', (error, stdout, stderr) => {
+          if (error) console.error(`Error: ${error.message}`);
+          if (stderr) console.error(`Error: ${stderr}`);
+          console.log(`Output: ${stdout}`);
+
+          exec('python3 github_update.py', (error, stdout, stderr) => {
+            if (error) console.error(`Error: ${error.message}`);
+            if (stderr) console.error(`Error: ${stderr}`);
+            console.log(`Output: ${stdout}`);
+          });
+        });
+      } else {
+        this.sendError(400, "Bad Request: Missing author or message");
+      }
+    });
+  }
+
+  saveMessage(author, message) {
+    const today = DateTime.now().toFormat('yyyy-MM-dd');
+    const directory = path.join(this.directory, 'message', today);
+    fs.mkdirSync(directory, { recursive: true });
+
+    const title = this.generateTitle(message);
+    const filename = `${title}.txt`;
+    const filepath = path.join(directory, filename);
+
+    fs.writeFileSync(filepath, `${message}\n\nauthor: ${author}`, 'utf-8');
+  }
+
+  generateTitle(message) {
+    let title = message.split(' ').slice(0, 5).join('_');
+    title = title.replace(/[^a-zA-Z0-9_-]/g, '');
+    if (!title) {
+      title = Math.random().toString(36).substring(2, 12);
+    }
+    return title;
+  }
+
+  handleGithubUpdate() {
+    this.res.writeHead(200, { 'Content-Type': 'text/html' });
+    this.res.end("Update triggered successfully");
+    exec('python3 github_update.py', (error, stdout, stderr) => {
+      if (error) console.error(`Error: ${error.message}`);
+      if (stderr) console.error(`Error: ${stderr}`);
+      console.log(`Output: ${stdout}`);
+    });
+  }
+
   checkAndGenerateReport() {
     const htmlFile = path.join(this.directory, 'log.html');
     fs.stat(htmlFile, (err, stats) => {
       if (err || Date.now() - stats.mtime.getTime() > 60000) {
         console.log(`${htmlFile} is older than 60 seconds or does not exist. Running generate_report.js...`);
-        exec('node generate_report.js', (error, stdout, stderr) => {
-          if (error) {
-            console.error(`Error: ${error.message}`);
-            return;
-          }
-          if (stderr) {
-            console.error(`Error: ${stderr}`);
-            return;
-          }
+        exec('python3 generate_report.py', (error, stdout, stderr) => {
+          if (error) console.error(`Error: ${error.message}`);
+          if (stderr) console.error(`Error: ${stderr}`);
           console.log(`Output: ${stdout}`);
         });
       } else {
         console.log(`${htmlFile} is up-to-date.`);
+      }
+    });
+  }
+
+  checkAndGenerateChatHtml() {
+    const chatHtmlFile = path.join(this.directory, 'chat.html');
+    fs.stat(chatHtmlFile, (err, stats) => {
+      if (err || Date.now() - stats.mtime.getTime() > 60000) {
+        console.log(`${chatHtmlFile} is older than 60 seconds or does not exist. Running generate_chat_html.py...`);
+        exec('python3 generate_chat_html.py', (error, stdout, stderr) => {
+          if (error) console.error(`Error: ${error.message}`);
+          if (stderr) console.error(`Error: ${stderr}`);
+          console.log(`Output: ${stdout}`);
+        });
+      } else {
+        console.log(`${chatHtmlFile} is up-to-date.`);
       }
     });
   }
@@ -113,21 +212,56 @@ class CustomHTTPRequestHandler {
   }
 }
 
-function runServer(port, directory) {
+function isPortInUse(port) {
+  return new Promise((resolve) => {
+    const server = http.createServer();
+    server.once('error', () => {
+      resolve(true);
+    });
+    server.once('listening', () => {
+      server.close();
+      resolve(false);
+    });
+    server.listen(port);
+  });
+}
+
+async function findAvailablePort(startPort) {
+  let port = startPort;
+  while (await isPortInUse(port)) {
+    port++;
+  }
+  return port;
+}
+
+async function runServer(port, directory) {
   process.chdir(directory);
   const server = http.createServer((req, res) => {
     const handler = new CustomHTTPRequestHandler(req, res);
     handler.handleRequest();
   });
 
-  server.listen(port, () => {
-    console.log(`Serving HTTP on 0.0.0.0 port ${port} (http://0.0.0.0:${port}/) ...`);
-  });
+  try {
+    await new Promise((resolve, reject) => {
+      server.listen(port, () => {
+        console.log(`Serving HTTP on 0.0.0.0 port ${port} (http://0.0.0.0:${port}/) ...`);
+        resolve();
+      });
+      server.on('error', reject);
+    });
+    return true;
+  } catch (error) {
+    if (error.code === 'EADDRINUSE') {
+      console.log(`Port ${port} is already in use.`);
+      return false;
+    }
+    throw error;
+  }
 }
 
 function parseArguments() {
   const args = process.argv.slice(2);
-  let port = 8000;
+  let port;
   let directory = process.cwd();
 
   for (let i = 0; i < args.length; i += 2) {
@@ -141,5 +275,20 @@ function parseArguments() {
   return { port, directory };
 }
 
-const { port, directory } = parseArguments();
-runServer(port, directory);
+async function main() {
+  const { port: specifiedPort, directory } = parseArguments();
+
+  if (specifiedPort) {
+    if (!await runServer(specifiedPort, directory)) {
+      console.log(`Failed to start server on specified port ${specifiedPort}.`);
+    }
+  } else {
+    let port = 8000;
+    while (!await runServer(port, directory)) {
+      port = await findAvailablePort(port + 1);
+      console.log(`Trying port ${port}...`);
+    }
+  }
+}
+
+main().catch(console.error);
