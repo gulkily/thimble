@@ -2,7 +2,7 @@
 
 ## Overview 
 
-Thimble is a secure, military-grade messaging system proof-of-concept that 
+Thimble is a secure messaging system proof-of-concept that
 prioritizes simplicity, security, and usability. It's not a silver bullet for 
 all communication needs, but a focused tool designed to enhance your specific 
 workflows.
