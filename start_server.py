@@ -30,6 +30,13 @@ class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
 		elif self.path == '/chat.html':
 			self.check_and_generate_chat_html()
 			super().do_GET()
+		elif self.path == '/api/github_update':
+			self.send_response(200)
+			self.send_header('Content-type', 'text/html')
+			self.end_headers()
+			self.wfile.write(b"Update triggered successfully")
+			# update the GitHub repository using github_update.py
+			subprocess.run(['python', 'github_update.py'], check=True)
 		elif self.path.endswith('.txt'):
 			self.serve_text_file()
 		else:
