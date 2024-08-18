@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "html-escaper": "^3.0.3"
+    "html-escaper": "^3.0.3",
+    "luxon": "^3.5.0"
   }
 }
