@@ -1,5 +1,5 @@
-# generate_chat_html.py
-# to run: python3 generate_chat_html.py
+# chat.html.py
+# to run: python3 chat.html.py
 
 import os
 import re

@@ -131,8 +131,8 @@ class CustomHTTPHandler < WEBrick::HTTPServlet::FileHandler
   def check_and_generate_chat_html
     chat_html_file = File.join(@root, 'chat.html')
     if !File.exist?(chat_html_file) || Time.now - File.mtime(chat_html_file) > 60
-      puts "#{chat_html_file} is older than 60 seconds or does not exist. Running generate_chat_html.rb..."
-      system('ruby generate_chat_html.rb')
+      puts "#{chat_html_file} is older than 60 seconds or does not exist. Running chat.html.rb..."
+      system('ruby chat.html.rb')
     else
       puts "#{chat_html_file} is up-to-date."
     end

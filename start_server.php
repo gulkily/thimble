@@ -45,8 +45,8 @@ class CustomHTTPRequestHandler {
 	private function checkAndGenerateChatHtml() {
 		$chatHtmlFile = $this->directory . '/chat.html';
 		if (!file_exists($chatHtmlFile) || (time() - filemtime($chatHtmlFile)) > 60) {
-			echo "chat.html is older than 60 seconds or does not exist. Running generate_chat_html.py...\n";
-			exec('python generate_chat_html.py');
+			echo "chat.html is older than 60 seconds or does not exist. Running chat.html.py...\n";
+			exec('python chat.html.py');
 		} else {
 			echo "chat.html is up-to-date.\n";
 		}

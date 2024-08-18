@@ -138,8 +138,8 @@ class CustomHTTPRequestHandler {
     const chatHtmlFile = path.join(this.directory, 'chat.html');
     fs.stat(chatHtmlFile, (err, stats) => {
       if (err || Date.now() - stats.mtime.getTime() > 60000) {
-        console.log(`${chatHtmlFile} is older than 60 seconds or does not exist. Running generate_chat_html.py...`);
-        exec('python3 generate_chat_html.py', (error, stdout, stderr) => {
+        console.log(`${chatHtmlFile} is older than 60 seconds or does not exist. Running chat.html.py...`);
+        exec('python3 chat.html.py', (error, stdout, stderr) => {
           if (error) console.error(`Error: ${error.message}`);
           if (stderr) console.error(`Error: ${stderr}`);
           console.log(`Output: ${stdout}`);

@@ -1,6 +1,6 @@
 <?php
-// generate_chat_html.php
-// to run: php generate_chat_html.php
+// chat.html.php
+// to run: php chat.html.php
 
 // Debug flag
 $DEBUG = false;

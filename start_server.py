@@ -104,8 +104,8 @@ class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
 	def check_and_generate_chat_html(self):
 		chat_html_file = os.path.join(self.directory, 'chat.html')
 		if not os.path.exists(chat_html_file) or time.time() - os.path.getmtime(chat_html_file) > 60:
-			print(f"{chat_html_file} is older than 60 seconds or does not exist. Running generate_chat_html.py...")
-			subprocess.run(['python', 'generate_chat_html.py'], check=True)
+			print(f"{chat_html_file} is older than 60 seconds or does not exist. Running chat.html.py...")
+			subprocess.run(['python', 'chat.html.py'], check=True)
 		else:
 			print(f"{chat_html_file} is up-to-date.")
 

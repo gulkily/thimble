@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 
-# generate_chat_html.pl
-# to run: perl generate_chat_html.pl
+# chat.html.pl
+# to run: perl chat.html.pl
 
 use strict;
 use warnings;
