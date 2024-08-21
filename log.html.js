@@ -1,5 +1,5 @@
-// generate_report.js
-// to run: node generate_report.js
+// log.html.js
+// to run: node log.html.js
 
 const fs = require('fs');
 const path = require('path');

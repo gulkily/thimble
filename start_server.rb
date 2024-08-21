@@ -121,8 +121,8 @@ class CustomHTTPHandler < WEBrick::HTTPServlet::FileHandler
   def check_and_generate_report
     html_file = File.join(@root, 'log.html')
     if !File.exist?(html_file) || Time.now - File.mtime(html_file) > 60
-      puts "#{html_file} is older than 60 seconds or does not exist. Running generate_report.rb..."
-      system('ruby generate_report.rb')
+      puts "#{html_file} is older than 60 seconds or does not exist. Running log.html.rb..."
+      system('ruby log.html.rb')
     else
       puts "#{html_file} is up-to-date."
     end

@@ -96,8 +96,8 @@ class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
 	def check_and_generate_report(self):
 		html_file = os.path.join(self.directory, 'log.html')
 		if not os.path.exists(html_file) or time.time() - os.path.getmtime(html_file) > 60:
-			print(f"{html_file} is older than 60 seconds or does not exist. Running generate_report.py...")
-			subprocess.run(['python', 'generate_report.py'], check=True)
+			print(f"{html_file} is older than 60 seconds or does not exist. Running log.html.py...")
+			subprocess.run(['python', 'log.html.py'], check=True)
 		else:
 			print(f"{html_file} is up-to-date.")
 

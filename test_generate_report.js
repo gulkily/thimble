@@ -24,10 +24,10 @@ function checkOutputFile(filePath) {
 }
 
 const scripts = [
-	'python3 generate_report.py',
-	'php generate_report.php',
-	'node generate_report.js',
-	'bash generate_report.sh'
+	'python3 log.html.py',
+	'php log.html.php',
+	'node log.html.js',
+	'bash log.html.sh'
 ];
 
 async function runTests() {

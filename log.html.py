@@ -1,7 +1,7 @@
-# generate_report.py
-# to run: python3 generate_report.py
+# log.html.py
+# to run: python3 log.html.py
 
-# generate_report.py
+# log.html.py
 # Description: Generates an HTML report of message files in a Git repository
 # Dependencies: os, re, datetime, git, gnupg, traceback, chardet
 # Input: None (uses current directory as repo_path)
@@ -23,7 +23,7 @@
 #
 # Note: Requires template files (page.html, page_row.html, webmail.css) in ./template directory
 #
-# To run: python3 generate_report.py
+# To run: python3 log.html.py
 
 import os
 import re

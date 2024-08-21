@@ -11,10 +11,10 @@ def check_output_file(file_path):
     return os.path.exists(file_path) and os.path.getsize(file_path) > 0
 
 scripts = [
-    'python3 generate_report.py',
-    'php generate_report.php',
-    'node generate_report.js',
-    'bash generate_report.sh'
+    'python3 log.html.py',
+    'php log.html.php',
+    'node log.html.js',
+    'bash log.html.sh'
 ]
 
 for script in scripts:

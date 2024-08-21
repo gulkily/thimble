@@ -35,8 +35,8 @@ class CustomHTTPRequestHandler {
 	private function checkAndGenerateReport() {
 		$htmlFile = $this->directory . '/log.html';
 		if (!file_exists($htmlFile) || (time() - filemtime($htmlFile)) > 60) {
-			echo "log.html is older than 60 seconds or does not exist. Running generate_report.py...\n";
-			exec('python generate_report.py');
+			echo "log.html is older than 60 seconds or does not exist. Running log.html.py...\n";
+			exec('python log.html.py');
 		} else {
 			echo "log.html is up-to-date.\n";
 		}

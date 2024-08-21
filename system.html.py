@@ -29,7 +29,7 @@ async def run_script(script_name):
 async def generate_html():
 	scripts = {
 		'Commit Files': ['test_commit_files.js', 'test_commit_files.php', 'test_commit_files.py'],
-		'Generate Report': ['test_generate_report.js', 'test_generate_report.php', 'test_generate_report.py', 'test_generate_report.sh'],
+		'Generate Report': ['test_log.html.js', 'test_log.html.php', 'test_log.html.py', 'test_log.html.sh'],
 		'Start Server': ['test_start_server.php', 'test_start_server.py']
 	}
 

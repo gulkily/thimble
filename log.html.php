@@ -1,6 +1,6 @@
 <?php
-// generate_report.php
-// to run: php generate_report.php
+// log.html.php
+// to run: php log.html.php
 
 function read_file($file_path) {
     return file_get_contents($file_path);

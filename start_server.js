@@ -122,8 +122,8 @@ class CustomHTTPRequestHandler {
     const htmlFile = path.join(this.directory, 'log.html');
     fs.stat(htmlFile, (err, stats) => {
       if (err || Date.now() - stats.mtime.getTime() > 60000) {
-        console.log(`${htmlFile} is older than 60 seconds or does not exist. Running generate_report.js...`);
-        exec('python3 generate_report.py', (error, stdout, stderr) => {
+        console.log(`${htmlFile} is older than 60 seconds or does not exist. Running log.html.js...`);
+        exec('python3 log.html.py', (error, stdout, stderr) => {
           if (error) console.error(`Error: ${error.message}`);
           if (stderr) console.error(`Error: ${stderr}`);
           console.log(`Output: ${stdout}`);
