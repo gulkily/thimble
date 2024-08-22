@@ -223,3 +223,5 @@ if (php_sapi_name() === 'cli-server') {
 	$handler = new CustomHTTPRequestHandler($directory);
 	$handler->handleRequest($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD']);
 }
+
+# end of start_server.php
