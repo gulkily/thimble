@@ -162,3 +162,5 @@ if __name__ == "__main__":
     generate_chat_html(args.repo_path, args.output_file, args.max_messages, args.max_message_length, args.title)
     debug_print(f"Chat log generated: {args.output_file}")
     debug_print("Script completed.")
+
+# end of chat.html.py

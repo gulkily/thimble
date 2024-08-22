@@ -160,4 +160,5 @@ $DEBUG = isset($options['debug']);
 generate_chat_html($repo_path, $output_file, $max_messages, $max_message_length, $title);
 debug_print("Chat log generated: $output_file");
 debug_print("Script completed.");
-?>
+
+// end of chat.html.php
