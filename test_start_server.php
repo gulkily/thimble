@@ -43,7 +43,6 @@ $server_scripts = [
 	'ruby start_server.rb',
 	'php start_server.php',
 	'node start_server.js',
-	'bash start_server.sh'
 ];
 
 foreach ($server_scripts as $script) {
