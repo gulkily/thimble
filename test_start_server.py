@@ -34,6 +34,7 @@ server_scripts = [
     'ruby start_server.rb',
     'php start_server.php',
     'node start_server.js',
+    'perl start_server.pl',
 ]
 
 for script in server_scripts:
