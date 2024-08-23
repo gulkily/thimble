@@ -1,3 +1,6 @@
+# test_chat.html.py - Test the chat.html.* scripts
+# to run: python3 test_chat.html.py
+
 import subprocess
 import time
 import concurrent.futures
@@ -66,3 +69,6 @@ if __name__ == "__main__":
 
     results = run_tests(scripts)
     print_results(results)
+
+
+# end of test_chat.html.py
