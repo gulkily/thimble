@@ -58,6 +58,10 @@ sub get_commit_timestamp {
     return $git_log ? $git_log : 0;
 }
 
+GetOptions(
+    "debug" => \$DEBUG
+);
+
 sub generate_chat_html {
     my ($repo_path, $output_file, $max_messages, $max_message_length, $title) = @_;
     $max_messages //= 50;
