@@ -54,3 +54,5 @@ for script in server_scripts:
     print("Server stopped successfully")
 
 print("\nAll tests passed successfully!")
+
+# end of test_start_server.py
