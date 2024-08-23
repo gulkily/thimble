@@ -11,9 +11,9 @@ workflows.
 
 ## Key Benefits
 
-* **Security:** End-to-end encryption ensures your messages remain confidential.
 * **Reliability:** Message history is stored in a Git repository for easy auditing and backup.
 * **Efficiency:** A streamlined interface helps you communicate quickly and effectively.
+* **Durability and ease of extension:** Written concurrently in 5 languages, Thimble is easy to maintain in your language of choice. Easy to extend using LLMs. Multiple supported platforms also allow resilience and reliability on different platforms.
 
 ## Why Thimble?
 
