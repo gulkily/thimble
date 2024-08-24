@@ -1,6 +1,14 @@
+test_chat.html.py
 test_commit_files.js
 test_commit_files.php
+test_commit_files.pl
 test_commit_files.py
+test_commit_files.rb
+test_generate_report.js
+test_generate_report.php
+test_generate_report.py
+test_generate_report.sh
+test_github_update.py
 test_log.html.js
 test_log.html.php
 test_log.html.py
