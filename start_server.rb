@@ -85,10 +85,10 @@ class CustomHTTPHandler < WEBrick::HTTPServlet::FileHandler
 	  save_message(author, message)
 	  res.status = 200
 	  res['Content-Type'] = 'text/html'
-	  res.body = "Message saved successfully<meta http-equiv="refresh" content="1;url=/chat.html">"
+	  res.body = "Message saved successfully"
+	  res.body += '<meta http-equiv="refresh" content="1;url=/chat.html">'
 	  system('ruby commit_files.rb message')
 	  system('ruby github_update.rb')
-	  res.body += '<meta http-equiv="refresh" content="1;url=/chat.html">'
 	else
 	  res.status = 400
 	  res.body = "Bad Request: Missing author or message"

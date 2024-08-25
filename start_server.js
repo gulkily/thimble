@@ -67,7 +67,7 @@ class CustomHTTPRequestHandler {
       if (author && message) {
         this.saveMessage(author, message);
         this.res.writeHead(200, { 'Content-Type': 'text/html' });
-        this.res.end("Message saved successfully<meta http-equiv=\"refresh\" content=\"1;url=/chat.html\">");
+        this.res.end("Message saved successfully" + '<meta http-equiv="refresh" content="1;url=chat.html">');
 
         // Commit the message and update GitHub
         exec('python3 commit_files.py message', (error, stdout, stderr) => {

@@ -134,7 +134,7 @@ sub handle_chat_post {
     if ($author && $message) {
         save_message($author, $message);
         $c->send_response(HTTP::Response->new(RC_OK, 'OK', ['Content-Type' => 'text/html'],
-            "Message saved successfully<meta http-equiv=\"refresh\" content=\"1;url=/chat.html\">"));
+            "Message saved successfully" . '<meta http-equiv="refresh" content="1;url=chat.html">'));
         system('python commit_files.py message');
         system('python github_update.py');
     } else {

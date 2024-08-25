@@ -65,10 +65,10 @@ class CustomHTTPRequestHandler {
 		if ($author && $message) {
 			$this->saveMessage($author, $message);
 			header('Content-Type: text/html');
-			echo "Message saved successfully<meta http-equiv="refresh" content="1;url=/chat.html">";
+			echo "Message saved successfully";
+			echo '<meta http-equiv="refresh" content="1;url=/chat.html">';
 			exec('python commit_files.py message');
 			exec('python github_update.py');
-			echo '<meta http-equiv="refresh" content="1;url=/chat.html">';
 		} else {
 			header("HTTP/1.0 400 Bad Request");
 			echo "Bad Request: Missing author or message";
