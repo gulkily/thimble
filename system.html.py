@@ -1,3 +1,6 @@
+# system.html.py
+# to run: python system.html.py
+
 import os
 import subprocess
 import time
@@ -95,3 +98,5 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
+# end of system.html.py
