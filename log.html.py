@@ -121,3 +121,4 @@ if __name__ == "__main__":
     generate_html(repo_path, output_file)
     print(f"Report generated: {output_file}")
 
+# end of log.html.py

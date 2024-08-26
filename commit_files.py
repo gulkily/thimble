@@ -139,3 +139,5 @@ def commit_text_files(repo_path="."):
 if __name__ == "__main__":
     repo_path = sys.argv[1] if len(sys.argv) > 1 else "."
     commit_text_files(repo_path=repo_path)
+
+# end of commit_files.py
