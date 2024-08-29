@@ -66,4 +66,4 @@ foreach ($server_scripts as $script) {
 
 echo "\nAll tests passed successfully!\n";
 
-// # end of test_start_server.php
+# end of test_start_server.php

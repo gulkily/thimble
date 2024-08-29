@@ -1,6 +1,8 @@
+// test_generate_report.js
+// to run: node test_generate_report.js
+
 const { exec } = require('child_process');
 const fs = require('fs');
-
 function runGenerateReport(script) {
 	return new Promise((resolve, reject) => {
 		const startTime = Date.now();
@@ -62,3 +64,5 @@ async function runTests() {
 }
 
 runTests();
+
+// end of test_generate_report.js

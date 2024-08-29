@@ -1,3 +1,6 @@
+# test_generate_report.py
+# to run: python3 test_generate_report.py
+
 import os
 import subprocess
 import time
@@ -42,3 +45,5 @@ for script in scripts:
     os.remove('log.html')
 
 print("\nAll tests passed successfully!")
+
+# end of test_generate_report.py

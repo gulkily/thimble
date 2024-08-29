@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# test_generate_report.sh
+# to run: bash test_generate_report.sh
+
 run_generate_report() {
     start_time=$(date +%s.%N)
     output=$($1 2>&1)
@@ -52,3 +55,5 @@ for script in "${scripts[@]}"; do
 done
 
 echo -e "\nAll tests passed successfully!"
+
+# end of test_generate_report.sh
