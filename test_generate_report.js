@@ -1,5 +1,5 @@
-// test_generate_report.js
-// to run: node test_generate_report.js
+// test_log.html.js
+// to run: node test_log.html.js
 
 const { exec } = require('child_process');
 const fs = require('fs');
@@ -65,4 +65,4 @@ async function runTests() {
 
 runTests();
 
-// end of test_generate_report.js
+// end of test_log.html.js

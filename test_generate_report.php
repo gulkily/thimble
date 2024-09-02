@@ -1,7 +1,7 @@
 <?php
 
-# test_generate_report.php
-# to run: php test_generate_report.php
+# test_log.html.php
+# to run: php test_log.html.php
 function run_generate_report($script) {
 	$start_time = microtime(true);
 	exec($script . " 2>&1", $output, $return_code);
@@ -44,4 +44,4 @@ foreach ($scripts as $script) {
 
 echo "\nAll tests passed successfully!\n";
 
-# end of test_generate_report.php
+# end of test_log.html.php

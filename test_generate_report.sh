@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# test_generate_report.sh
-# to run: bash test_generate_report.sh
+# test_log.html.sh
+# to run: bash test_log.html.sh
 
 run_generate_report() {
     start_time=$(date +%s.%N)
@@ -56,4 +56,4 @@ done
 
 echo -e "\nAll tests passed successfully!"
 
-# end of test_generate_report.sh
+# end of test_log.html.sh

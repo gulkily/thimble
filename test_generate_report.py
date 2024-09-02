@@ -1,5 +1,5 @@
-# test_generate_report.py
-# to run: python3 test_generate_report.py
+# test_log.html.py
+# to run: python3 test_log.html.py
 
 import os
 import subprocess
@@ -46,4 +46,4 @@ for script in scripts:
 
 print("\nAll tests passed successfully!")
 
-# end of test_generate_report.py
+# end of test_log.html.py
