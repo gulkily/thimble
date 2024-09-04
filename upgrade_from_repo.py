@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 
+# upgrade_from_repo.py
+# to run: python3 upgrade_from_repo.py <repository_path>
+
 import os
 import sys
 import subprocess
@@ -60,3 +63,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+# end of upgrade_from_repo.py

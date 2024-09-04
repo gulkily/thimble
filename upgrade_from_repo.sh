@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# upgrade_from_repo.sh
+# to run: bash upgrade_from_repo.sh <repository_path>
+
 set -e
 
 repo_path="$1"
@@ -47,3 +50,5 @@ git stash pop || true
 git fsck
 
 echo "Repository updated successfully"
+
+# end of upgrade_from_repo.sh

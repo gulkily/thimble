@@ -1,5 +1,8 @@
 #!/usr/bin/env perl
 
+# upgrade_from_repo.pl
+# to run: perl upgrade_from_repo.pl <repository_path>
+
 use strict;
 use warnings;
 use Cwd;
@@ -62,3 +65,5 @@ run_command("git stash pop");
 run_command("git fsck");
 
 print "Repository updated successfully\n";
+
+# end of upgrade_from_repo.pl
