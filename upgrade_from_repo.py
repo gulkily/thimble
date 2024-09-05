@@ -3,6 +3,29 @@
 # upgrade_from_repo.py
 # to run: python3 upgrade_from_repo.py <repository_path>
 
+# Functionality Definition:
+#
+# This script updates a Git repository to the latest version of its main branch.
+# It performs the following steps:
+#
+# 1. Check if the correct number of command-line arguments is provided.
+# 2. Change the current working directory to the specified repository path.
+# 3. Verify that the specified path is a Git repository.
+# 4. Determine the name of the main branch (e.g., main or master).
+# 5. Checkout the main branch.
+# 6. Stash any local changes to prevent conflicts.
+# 7. Fetch the latest changes from the remote repository.
+# 8. Reset the local branch to match the remote branch exactly.
+# 9. Clean up any untracked files and directories.
+# 10. Update all submodules recursively.
+# 11. Attempt to reapply any stashed changes.
+# 12. Verify the integrity of the repository.
+# 13. Print a success message if all steps complete without errors.
+#
+# The script uses subprocess to run Git commands and handles potential errors.
+# It's designed to be run from the command line with the repository path as an argument.
+#
+
 import os
 import sys
 import subprocess

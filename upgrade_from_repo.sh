@@ -3,6 +3,29 @@
 # upgrade_from_repo.sh
 # to run: bash upgrade_from_repo.sh <repository_path>
 
+# Functionality Definition:
+#
+# This script is designed to update a Git repository to the latest version of its main branch.
+# It performs the following operations:
+#
+# 1. Accepts a repository path as a command-line argument.
+# 2. Changes the working directory to the specified repository path.
+# 3. Checks if the specified path is a valid Git repository.
+# 4. Determines the name of the main branch (e.g., 'main' or 'master').
+# 5. Switches to the main branch.
+# 6. Stashes any local changes to prevent conflicts.
+# 7. Fetches the latest changes from the remote repository.
+# 8. Resets the local branch to match the remote branch exactly.
+# 9. Cleans up any untracked files and directories.
+# 10. Updates all submodules recursively.
+# 11. Attempts to reapply the stashed changes (if any).
+# 12. Verifies the integrity of the repository.
+# 13. Prints a success message if all operations complete without errors.
+#
+# The script uses error handling to exit if any step fails, ensuring the repository
+# is left in a consistent state. It's designed to be run from the command line and
+# requires Git to be installed and accessible in the system's PATH.
+
 set -e
 
 repo_path="$1"
