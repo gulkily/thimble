@@ -18,14 +18,14 @@ def standardize_line_endings(file_path):
 def process_directory(directory):
     for root, dirs, files in os.walk(directory):
         for file in files:
-            if file.endswith(('.py', '.js', '.sh', '.txt', '.html')):
+            if file.endswith(('.py', '.js', '.sh', '.txt', '.html', '.php', '.pl', '.rb', '.css')):
                 file_path = os.path.join(root, file)
                 print(f"Standardizing line endings in: {file_path}")
                 standardize_line_endings(file_path)
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print("Usage: python standardize_line_endings.py <directory>")
+        print("Usage: python fix_line_endings.py <directory>")
         sys.exit(1)
 
     directory = sys.argv[1]

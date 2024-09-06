@@ -17,7 +17,7 @@ function processDirectory(directory) {
         
         if (file.isDirectory()) {
             processDirectory(fullPath);
-        } else if (file.isFile() && /\.(py|js|sh|txt|html)$/.test(file.name)) {
+        } else if (file.isFile() && /\.(py|js|sh|txt|html|php|pl|rb|css)$/.test(file.name)) {
             console.log(`Standardizing line endings in: ${fullPath}`);
             standardizeLineEndings(fullPath);
         }
@@ -25,7 +25,7 @@ function processDirectory(directory) {
 }
 
 if (process.argv.length !== 3) {
-    console.log("Usage: node standardize_line_endings.js <directory>");
+    console.log("Usage: node fix_line_endings.js <directory>");
     process.exit(1);
 }
 

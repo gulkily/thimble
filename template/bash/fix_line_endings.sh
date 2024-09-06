@@ -10,7 +10,7 @@ standardize_line_endings() {
 process_directory() {
     local dir="$1"
     
-    find "$dir" -type f \( -name "*.py" -o -name "*.js" -o -name "*.sh" -o -name "*.txt" -o -name "*.html" \) | while read -r file; do
+    find "$dir" -type f \( -name "*.py" -o -name "*.js" -o -name "*.php" -o -name "*.pl" -o -name "*.rb" -o -name "*.css" -o -name "*.sh" -o -name "*.txt" -o -name "*.html" \) | while read -r file; do
         echo "Standardizing line endings in: $file"
         standardize_line_endings "$file"
     done
