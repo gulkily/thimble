@@ -8,6 +8,7 @@ declare -A command_scripts
 command_scripts=(
     ["start"]="start_server"
     ["upgrade"]="upgrade_from_repo"
+    ["fix"]="fix_line_endings"
     # Add new commands here in the format:
     # ["command_name"]="script_name"
 )
