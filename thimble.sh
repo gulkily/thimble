@@ -7,6 +7,7 @@
 declare -A command_scripts
 command_scripts=(
     ["start"]="start_server"
+    ["upgrade"]="upgrade_from_repo"
     # Add new commands here in the format:
     # ["command_name"]="script_name"
 )
@@ -14,6 +15,7 @@ command_scripts=(
 # Function to find and run a script
 run_script() {
     script_name="$1"
+    shift  # Remove the first argument (script_name)
     # Find all scripts matching the name
     readarray -t scripts < <(find template -name "${script_name}.*")
 
@@ -58,22 +60,22 @@ run_script() {
     echo "Running: $random_script"
     case "${random_script##*.}" in
         py)
-            python "$random_script"
+            python "$random_script" "$@"
             ;;
         pl)
-            perl "$random_script"
+            perl "$random_script" "$@"
             ;;
         rb)
-            ruby "$random_script"
+            ruby "$random_script" "$@"
             ;;
         js)
-            node "$random_script"
+            node "$random_script" "$@"
             ;;
         sh)
-            bash "$random_script"
+            bash "$random_script" "$@"
             ;;
         php)
-            php "$random_script"
+            php "$random_script" "$@"
             ;;
     esac
 }
@@ -81,7 +83,7 @@ run_script() {
 # Main function to handle subcommands
 t() {
     if [ -z "$1" ]; then
-        echo "Usage: t <command>"
+        echo "Usage: t <command> [arguments...]"
         echo "Available commands:"
         for cmd in "${!command_scripts[@]}"; do
             echo "  $cmd"
@@ -91,7 +93,8 @@ t() {
 
     script_name="${command_scripts[$1]}"
     if [ -n "$script_name" ]; then
-        run_script "$script_name"
+        shift  # Remove the first argument (command name)
+        run_script "$script_name" "$@"
     else
         echo "Unknown command: $1"
         echo "Use 't' without arguments to see available commands."
@@ -101,6 +104,6 @@ t() {
 # Create the alias
 alias t=t
 
-echo "Thimble script loaded. Use 't <command>' to run commands."
+echo "Thimble script loaded. Use 't <command> [arguments...]' to run commands."
 
 # end of thimble.sh
