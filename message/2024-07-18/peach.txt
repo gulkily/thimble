@@ -27,16 +27,16 @@ The remainder of this guideline presents information that may be useful to a wri
 2. DEVELOPING THE SECURITY FEATURES USER'S GUIDE
 The primary purpose of a SFUG is to explain how the security mechanisms in a specific system work, so that users are able to consistently and effectively protect their information. To properly communicate this information, the SFUG author must identify the audience for the SFUG and the information that audience needs to use the security mechanisms in the system and then select an appropriate way to present the information. 
 2.1 AUDIENCE AND PACKAGING
-The SFUG requirement starts with "A single summary, chapter, or manual in user documentation . . .,, "User" in this context refers to a person who uses the system, but has no special privileges to affect the configuration of the system. The user for most general purpose trusted systems is often assumed to be a person with little or no computer experience, but this is not always the case. For example, the users of the UNIX™ system have traditionally been considered programmers or computer professionals with fairly extensive knowledge of computer concepts. In any system, the users are the audience for the SFUG and the SFUG author will have to characterize them to determine both the format and the level of discourse for the material presented in the SFUG. 
+The SFUG requirement starts with "A single summary, chapter, or manual in user documentation . . .,, "User" in this context refers to a person who uses the system, but has no special privileges to affect the configuration of the system. The user for most general purpose trusted systems is often assumed to be a person with little or no computer experience, but this is not always the case. For example, the users of the UNIXï¿½ system have traditionally been considered programmers or computer professionals with fairly extensive knowledge of computer concepts. In any system, the users are the audience for the SFUG and the SFUG author will have to characterize them to determine both the format and the level of discourse for the material presented in the SFUG. 
 In many cases, the SFUG requirement is satisfied by changing an existing document, which is one of the reasons that the SFUG requirement is so general. 
 As stated in the requirement, the SFUG could be: 
-· A summary of the security features and user responsibilities, 
-· A chapter devoted to these issues, or 
-· A whole manual devoted to security. 
+ï¿½ A summary of the security features and user responsibilities, 
+ï¿½ A chapter devoted to these issues, or 
+ï¿½ A whole manual devoted to security. 
 Some presentation schemes that previous participants in the Trusted Product Evaluation Program have used include: 
 A separate manual devoted to the general user of the system that covers the security features and responsibilities pertaining to users. This is usually the best choice when a document of this sort is already in place and the security functions have always been present in the system in some form anyway. For a system in which user services are provided by individual subsystems, one of which provides all the security functionality, and the user guide is the collection of user guides `for the individual subsystems, the SFUG would most likely be a stand-alone manual addressing only the security issues. 
-· A subsection of the manual produced to satisfy the Trusted Facility Manual (TFM) requirement of the TCSEC. From a security standpoint, this is considered unwise, since it tends to make the system configuration and vulnerability information available to anyone looking for information on how to use the security features of the system. From a documentation standpoint, it seems the easiest, since it places all of the security discussion in one place and allows a certain amount of synergy in the writing process, i.e., privileged users do many of the same activities as general users. This approach eliminates the need to document those facilities in two places. 
-· A chapter or an appendix of a user manual that discusses the user's security responsibility and then provides an index to the detailed discussions of individual functions that are already part of the general user manual. An extension of this could be a small pamphlet that does the same thing but can be reproduced separately and given out as needed - something like a pocket guide to system security. 
+ï¿½ A subsection of the manual produced to satisfy the Trusted Facility Manual (TFM) requirement of the TCSEC. From a security standpoint, this is considered unwise, since it tends to make the system configuration and vulnerability information available to anyone looking for information on how to use the security features of the system. From a documentation standpoint, it seems the easiest, since it places all of the security discussion in one place and allows a certain amount of synergy in the writing process, i.e., privileged users do many of the same activities as general users. This approach eliminates the need to document those facilities in two places. 
+ï¿½ A chapter or an appendix of a user manual that discusses the user's security responsibility and then provides an index to the detailed discussions of individual functions that are already part of the general user manual. An extension of this could be a small pamphlet that does the same thing but can be reproduced separately and given out as needed - something like a pocket guide to system security. 
 Trusted product evaluators tend to favor centralization of information, because that makes it easier to determine whether the system satisfies the TCSEC (Orange Book) requirements. Given that bias, bullet one would usually be the most preferred option, since it satisfies the requirement in one unique place. Bullet two is a less desirable option, because, in addition to the procedural security considerations, it requires some discrimination to identify which parts of the document satisfy the SFUG requirement and which parts satisfy the TFM requirement. Bullet three is least desirable for two reasons. First, it involves pointers to other information, making it more cumbersome for both evaluators and users to get to some aspects of the information. Second, there might be a tendency to make the document so terse that it excludes some information that is relevant to system security. 
 2.2 PRESENTATION
 The SFUG provides the users of the system with the necessary background and specific information to use the protection features of the system correctly. Its purpose is twofold. First, it provides the information that a user needs to enter the system and start working-within the system security constraints. Second, it explains the user's role in maintaining the security of the system. Its scope should be limited to documenting only the features available to all users and only the responsibilities that all users have for system security. To accomplish this purpose, within the scope, the SFUG should explain what security means in the system, what security features are present and why, how the features work, and how to use the features properly. The SFUG should be clear, concise, and complete to increase its readability. 
@@ -81,9 +81,9 @@ The distinguishing feature of all division B and A computer classes is the elect
 Another label-related requirement that affects the users of a system is the one for labeling human-readable output, which states that: 
 "The ADP system administrator shall be able to specify the printable label names associated with exported sensitivity labels. The TCB shall mark the beginning and end of all human-readable, paged, hardcopy output (e.g., line printer output) with human-readable sensitivity labels that properly represent the sensitivity of the output. The TCB shall, by default, mark the top and bottom of each page of human- readable, paged, hardcopy output (e.g., line printer output) with human-readable sensitivity labels that properly represent the overall sensitivity of the output or that properly represent the sensitivity of the information on the page. The TCB shall, by default and in an appropriate manner, mark other (forms of human-readable output (e.g., maps, graphics) with human- readable sensitivity labels that properly represent the sensitivity of the output. Any override of these marking defaults shall be auditable by the TCB." [3.1.1.3.2.3] The above requirement is the same for classes Bl through Al. 
 These two requirements, for subject sensitivity labels and labeled human-readable output, apply to any multilevel system; therefore, the SFUG for all B and A level systems should, at the least, explain: 
-· How labels are attached to subjects and objects, 
-· The relationship between the "clearance" that a user has and the label that is associated with a particular computer session, and 
-· The reason for job and page labels on printed output and terminal or window labels on computer displays (as well as cautions about disabling the display of such labels). 
+ï¿½ How labels are attached to subjects and objects, 
+ï¿½ The relationship between the "clearance" that a user has and the label that is associated with a particular computer session, and 
+ï¿½ The reason for job and page labels on printed output and terminal or window labels on computer displays (as well as cautions about disabling the display of such labels). 
 The last requirement that affects users is one for subject sensitivity labels that requires that: 
 "The TCB shall immediately notify a terminal user of each change in the security level associated with that user during an interactive session. A terminal user shall be able to query the TCB as desired for a display of the subject's complete sensitivity label." [3.2.1.3.3] 
 The above requirement applies to classes B2 through Al; therefore, the SFUG for these systems should explain the mechanism used to notify a user of a security level change. 
@@ -143,21 +143,21 @@ This section provides the background on the overall operation of the security co
 This section should describe the general environment for which the system is designed and briefly explain how this environment motivates the approach to protecting information stored in the system. The purpose of this section is to lay the foundation for the user's understanding of the system's security features, with later sections detailing what specific security services are available and when and how to use them. 
 2.2 DEFINITION OF TERMS AND SERVICES
 This section should first introduce the terms that will be used to describe the security services available in the system and then proceed to introduce those services, without detailing exactly how they are used. Recommended topics for this section are: 
-· An explanation of the general concepts of subjects and objects, followed by the identification of the subjects and objects in the system. 
-· An explanation of object reuse and its role in protecting information in the system. 
-· An explanation of the components of the l&A (identification and authentication) process (e.g., user-id, password, or smartcard) in the system and the importance of l&A to system security. 
-· An explanation of DAC, groups, privileges, protection bits/ACLs, and any other terms and concepts related to the system's DAC policy, followed by a description of how the DAC policy applies to the systern subjects and objects. 
-· An explanation of MAC, security labels, sensitivity levels, categories, authorizations, and any other terms and concepts related to the system's MAC policy, followed by a description of how the MAC policy applies to the system subjects and objects. 
+ï¿½ An explanation of the general concepts of subjects and objects, followed by the identification of the subjects and objects in the system. 
+ï¿½ An explanation of object reuse and its role in protecting information in the system. 
+ï¿½ An explanation of the components of the l&A (identification and authentication) process (e.g., user-id, password, or smartcard) in the system and the importance of l&A to system security. 
+ï¿½ An explanation of DAC, groups, privileges, protection bits/ACLs, and any other terms and concepts related to the system's DAC policy, followed by a description of how the DAC policy applies to the systern subjects and objects. 
+ï¿½ An explanation of MAC, security labels, sensitivity levels, categories, authorizations, and any other terms and concepts related to the system's MAC policy, followed by a description of how the MAC policy applies to the system subjects and objects. 
 2.3 THE INFORMATION SYSTEM SECURITY OFFICER
 This section discusses the role of the Information System Security Officer (1550) in maintaining the security of the system. It can also explain which problems should be reported to the 1550 and which should be reported to the system administrator (if the roles are separate). If the format of the SFUG allows it, this section could have space for site-specific notes on the 1550/user relationship. 
 2.4 USER SECURITY RESPONSlBlLlTlES
 This section discusses the user's responsibilities with respect to properly using the system security features. This would optimally be a tutorial that teaches effective use of the system security services, but any presentation that relates the security services to the user's day-to-day use of the system is appropriate. Some issues that might be addressed are: 
-· Authentication token (e.g., password or smartcard) protection. 
-· Warnings about leaving a terminal unattended. 
-· Procedures for "locking" a process when the terminal must be left unattended, but logged in. 
-· Default DAC access for named objects (e.g., files andkdirectories). 
-· Cautions about using programs that are not part of the standard system configuration (e.g., utilities or applications that have not been reviewed and tested by the system administrator(s)). 
-· Cautions about the effect of network access on system and data security. 
+ï¿½ Authentication token (e.g., password or smartcard) protection. 
+ï¿½ Warnings about leaving a terminal unattended. 
+ï¿½ Procedures for "locking" a process when the terminal must be left unattended, but logged in. 
+ï¿½ Default DAC access for named objects (e.g., files andkdirectories). 
+ï¿½ Cautions about using programs that are not part of the standard system configuration (e.g., utilities or applications that have not been reviewed and tested by the system administrator(s)). 
+ï¿½ Cautions about the effect of network access on system and data security. 
 3.SECURITY-RELATED COMMANDS FOR USERS
 This section comprises the majority of the SFUG since it describes in detail the commands and procedures for actually using the system. 
 3.1 USER IDENTIFICATION AND AUTHENTICATION
@@ -236,21 +236,21 @@ This section provides the background on the overall operation of the security co
 This section should describe the general environment for which the system is designed and briefly explain how this environment motivates the approach to protecting information stored in the system. The purpose of this section is to lay the foundation for the user's understanding of the system's security features, with later sections detailing what specific security services are available and when and how to use them. 
 2.2 DEFINITION OF TERMS AND SERVICES
 This section should first introduce the terms that will be used to describe the security services available in the system and then proceed to introduce those services, without detailing exactly how they are used. Recommended topics (and the criteria classes for.which they are relevant) for this section are: 
-· An explanation of the general concepts of subjects and objects, followed by the identification of the subjects and objects in the system. 
-· An explanation of object reuse and its role in protecting information in the system. 
-· An explanation of the components of the I&A (identification and authentication) process (e.g., user-id, password, or smartcard) in the system and the importance of I&A to system security. 
-· An explanation of DAC, groups, privileges, protection bits/ACLs (access control lists), and any other terms and concepts related to the system's DAC policy, followed by a description of how the DAC policy applies to the system subjects and objects. 
-· An explanation of MAC, security labels, sensitivity levels, categories, authorizations, and any other terms and concepts related to the system's MAC policy, followed by a description of how the MAC policy applies to the system subjects and objects. 
+ï¿½ An explanation of the general concepts of subjects and objects, followed by the identification of the subjects and objects in the system. 
+ï¿½ An explanation of object reuse and its role in protecting information in the system. 
+ï¿½ An explanation of the components of the I&A (identification and authentication) process (e.g., user-id, password, or smartcard) in the system and the importance of I&A to system security. 
+ï¿½ An explanation of DAC, groups, privileges, protection bits/ACLs (access control lists), and any other terms and concepts related to the system's DAC policy, followed by a description of how the DAC policy applies to the system subjects and objects. 
+ï¿½ An explanation of MAC, security labels, sensitivity levels, categories, authorizations, and any other terms and concepts related to the system's MAC policy, followed by a description of how the MAC policy applies to the system subjects and objects. 
 2.3 THE INFORMATION SYSTEM SECURITY OFFICER
 This section discusses the role of the information system security officer (1SS0) in maintaining the security of the system. It can also explain which problems should be reported to the 1SS0 and which should be reported to the system administrator (if the roles are separate). If the format of the SFUG allows it, this section could have space for site-specific notes on the 1SS0/user relationship. 
 2.4 USER SECURITY RESPONSIBILITIES
 This section discusses the user's responsibilities with respect to properly using the system security features. This would optimally be a tutorial that teaches effective use of the system security services, but any presentation that relates the security services to the user's day-to-day use of the system is appropriate. Some issues that might be addressed are: 
-· Authentication token (e.g., password or smartcard) protection. 
-· Warnings about leaving a terminal unattended. 
-· Procedures for "locking" a process when the terminal must be left unattended, but logged in. 
-· Default DAC access for named objects (e.g., files and directories). 
-· Cautions about using programs that are not part of the standard system configuration (e.g., utilities or applications that have not been reviewed and tested by the system administrator(s)). 
-· Cautions about the effect of network access on system and data security. 
+ï¿½ Authentication token (e.g., password or smartcard) protection. 
+ï¿½ Warnings about leaving a terminal unattended. 
+ï¿½ Procedures for "locking" a process when the terminal must be left unattended, but logged in. 
+ï¿½ Default DAC access for named objects (e.g., files and directories). 
+ï¿½ Cautions about using programs that are not part of the standard system configuration (e.g., utilities or applications that have not been reviewed and tested by the system administrator(s)). 
+ï¿½ Cautions about the effect of network access on system and data security. 
 3. SECURITY-RELATED COMMANDS FOR USERS
 This section comprises the majority of the SFUG since it describes in detail the commands and procedures for actually using the system. It should describe both the usage of the commands and reemphasize their role as tools to protect information stored on the system. For example, this part might consist of command reference pages (e.g., UNIX "man" pages) grouped by subject, possibly with a brief introduction at the beginning of each subject area. Alternatively, this section could contain general descriptions of the operation and options of individual commands or groups of commands, along with pointers to the detailed documentation of the invocation sequence(s) for the commands. 
 3.1 SYSTEM ACCESS
@@ -265,8 +265,8 @@ Many systems have the concept of a user profile, which contains the default sett
 This section should discuss the possible problems that a user could encounter when logging into the system or modifying session and user profiles. This section could be organized as a troubleshooting guide, where each problem and its potential solution(s) is presented in a table format. 
 3.2 ACCESS CONTROL FACILITIES
 This section describes the commands available to a user for managing the objects under his or her control. The major issue confronting the SFUG author in this section is how to organize the commands. Two possible options are: 
-· By security policy functionality, i.e., all commands that manipulate MAC attributes, DAC attributes, exportation to devices, labeled human-readable output etc. 
-· By target object class, i.e., all security-relevant commands that manipulate files, directories, printers, tape drives, interprocess communication, floppy disks, etc. 
+ï¿½ By security policy functionality, i.e., all commands that manipulate MAC attributes, DAC attributes, exportation to devices, labeled human-readable output etc. 
+ï¿½ By target object class, i.e., all security-relevant commands that manipulate files, directories, printers, tape drives, interprocess communication, floppy disks, etc. 
 Experience during previous evaluations indicates that the second option more closely matches the needs of the user, since it is closer to the organization expected when trying to search for a specific command to do a specific job. 
 3.3 PROTECTING REMOVABLE OBJECTS
 This section should discuss some of the basic actions that a user should take to ensure that the data contained in hardcopy or external storage form is protected as fully as when it is on the computer system. In a site-specific SFUG, this section could be an even stronger statement regarding the site's procedures for protecting information once it leaves the system. 
@@ -276,66 +276,66 @@ BIBLIOGRAPHY
 1. DoD Trusted Computer System Evaluation criteria, Natonal Computer Security Center, DoD 5200.28-STD, 1985. 
 2. American Telephone and Telegraph System V/MLS Release 1.1.2 Running on UNIX System V Release 3.1.1 (Final Evaluation Report), National Computer Security Center, CSC-EPL-89/003, October 1989. 
 This FER identified the following four documents as the SFUG for this product: 
-· System V/MLS User's Guide and Reference Manual, August 1989, 
-· 630/MLS User's Guide, August 1989, 
-· 302 UNIX System V Programmer's Reference Manual, August 1989, 
-· UNIX System V User's Guide, August 1989. 
+ï¿½ System V/MLS User's Guide and Reference Manual, August 1989, 
+ï¿½ 630/MLS User's Guide, August 1989, 
+ï¿½ 302 UNIX System V Programmer's Reference Manual, August 1989, 
+ï¿½ UNIX System V User's Guide, August 1989. 
 3. Computer Associates International CA-ACF2/VM, Release 3.1 (Final Evaluation Report), National Computer Security Center, CSC-EPL-87/007, September 1987. 
 This FER identified the following four documents as the SFUG for this product: 
-· Overview for CA-ACF2/""M Release 3.1, Publication Number AAG0042, Sept 
+ï¿½ Overview for CA-ACF2/""M Release 3.1, Publication Number AAG0042, Sept 
 1987, 
-· General Information Manual for CA-ACF2/""M Release 3.1, PN AAG0033, 
+ï¿½ General Information Manual for CA-ACF2/""M Release 3.1, PN AAG0033, 
 5ept1987, 
-· New Features and Enhancements Manual for CA-ACF2NM Release 3.1, PN 
+ï¿½ New Features and Enhancements Manual for CA-ACF2NM Release 3.1, PN 
 AAP0073, Sept 1987, 
-· User's Guide for CA-ACF2NM Release 3.1, PN AAP0037, Sept 1987. 
+ï¿½ User's Guide for CA-ACF2NM Release 3.1, PN AAP0037, Sept 1987. 
 4. Computer Associates International Top Secret, Version 3.0 (Final Evaluation Report), DoD Computer Security Center, CSC-EPL-85/002,,- April 1985. 
 This FER identified the following two documents as the SFUG for this product: 
-· TOP SECRET User's Guide, Document US-03, 1985, 
-· TOP SECRET TSS Reference Manual, Document TS-03, 1985. 
-· 
+ï¿½ TOP SECRET User's Guide, Document US-03, 1985, 
+ï¿½ TOP SECRET TSS Reference Manual, Document TS-03, 1985. 
+ï¿½ 
 5. Control Data Corporation Network Operating System Security Evaluation Package (Final Evaluation Report), National Computer Security Center, CSC-EPL-86/003, May 1986. 
 This FER identified the following document as the SFUG for this product: 
-· NOS Version 2 Reference Set, Volume 2: Guide to System Usage, Section 14, Publication Number 60459670, Revision D, 1986. 
+ï¿½ NOS Version 2 Reference Set, Volume 2: Guide to System Usage, Section 14, Publication Number 60459670, Revision D, 1986. 
 6. Digital Equipment Corporation VAX/VMS, Version 4.3 (Final Evaluation Report), National Computer Security Center, CSC-EPL-86/004, July 1986. 
 This FER identified the following document as the SFUG for this product: 
-· Guide to VAX/VMS System Security, Chapters 1-4, AA-Y51 0A-TE, AA-Y51 0A-Tl, VAX/VMS Version 4.2, July 1985. 
+ï¿½ Guide to VAX/VMS System Security, Chapters 1-4, AA-Y51 0A-TE, AA-Y51 0A-Tl, VAX/VMS Version 4.2, July 1985. 
 7. Data General Corporation Advanced Operating System/Virtual Storage (A 05/VS) (Final Evaluation Report), National Computer Security Center, CSC-EPL-89/001, February 1989. 
 This FER identified the following two documents as the SFUG for this product: 
-· Learning to Use Your AOS/VS System, Product Number 069-000031-02, 
+ï¿½ Learning to Use Your AOS/VS System, Product Number 069-000031-02, 
 November 1088, 
-· AOS/VS System Calls Dictionary, Product Number 093-000241-03, September 1986. 
+ï¿½ AOS/VS System Calls Dictionary, Product Number 093-000241-03, September 1986. 
 8. Gould, Inc Computer Systems Division UTX/32S, Release 1.0 (Final Evaluation Report), National Computer Security Center, CSC-EPL-86/007, December 1986. 
 This FER identified the following document as the SFUG for this product: 
-· Using Gould UTX/325, Release 1.0, which is Volume 1 of Gould UTX/32S Document Set, Volume Order Number 323-005231-000, November 1986. 
+ï¿½ Using Gould UTX/325, Release 1.0, which is Volume 1 of Gould UTX/32S Document Set, Volume Order Number 323-005231-000, November 1986. 
 9. Hewlett Packard Commercial Systems Division MPE v/E (Final Evaluation Report), National Computer Security Center, CSC-EPL-88/01 0, October 1988. 
 This FER identified the following document as the SFUG for this product: 
-· MPE V/E Security and Account Structure User's Guide, Product Number 32033-90136, October 1988. 
+ï¿½ MPE V/E Security and Account Structure User's Guide, Product Number 32033-90136, October 1988. 
 10. Honeywell MULTICS, MR1 1.0 (Final Evaluation Report), National Computer Security Center, CSC-EPL-85/003, June 1986. 
 This FER identified the following document as the SFUG for this product: 
-· Multics Programmers Reference Manual, Chapter 6, Order Number AG91 - 04,1986. 
+ï¿½ Multics Programmers Reference Manual, Chapter 6, Order Number AG91 - 04,1986. 
 11. Honeywell SCOMP (Secure Communications Processor) STOP Release 2.1 (Final Evaluation Report), DoD Computer Security Center, CSC-EPL-85/001, September 1985. 
 This FER identified the following document as the SFUG for this product: 
-· SCOMP User's Reference Manual, STOP Release 2.1, November 1984. 
+ï¿½ SCOMP User's Reference Manual, STOP Release 2.1, November 1984. 
 12. International Business Machines Resource Access Control Facility (RACF), Version 1, Release 5 (Final Evaluation Report), DoD Computer Security Center, CSC-EPL-84/001, July 1984. 
 This FER identified the following document as the SFUG for this product: 
-· OS/VS2 MVS Resource Access Control Facility (RACF): General Information Manual, 5C28-0722-6, 1984. 
+ï¿½ OS/VS2 MVS Resource Access Control Facility (RACF): General Information Manual, 5C28-0722-6, 1984. 
 13. International Business Machines Corporation VM/SP with RACF (Final Evaluation Report), National Computer Security Center, CSC-EPL-89/005, September 1989. 
 This FER identified the following six documents as the SFUG for this product: 
-· "Part Three: For General Users" in Virtual Machine/System Product C2 Security Guide VMISP Release 5 and VM/SP HPO Release 5, Library Number 
+ï¿½ "Part Three: For General Users" in Virtual Machine/System Product C2 Security Guide VMISP Release 5 and VM/SP HPO Release 5, Library Number 
 5C24-5384-0,' no date, 
-· RACF General User's Guide, Library Number 5C28-1341, December 1987, 
-· VM/SP CMS Command Reference, Library Number SCl 9-6209, no date, 
-· VM/Directory Maintenance Operation and Use, Library~Number 5C23-0437, 
+ï¿½ RACF General User's Guide, Library Number 5C28-1341, December 1987, 
+ï¿½ VM/SP CMS Command Reference, Library Number SCl 9-6209, no date, 
+ï¿½ VM/Directory Maintenance Operation and Use, Library~Number 5C23-0437, 
 March 1989, 
-· VMTAPE-MS User's Guide, Library Number 5H20-6245, September 1988, 
-· The VM HELP Facility, online function. 
+ï¿½ VMTAPE-MS User's Guide, Library Number 5H20-6245, September 1988, 
+ï¿½ The VM HELP Facility, online function. 
 14. Prime Computer, Inc PRlMOS Rev 21.0.1. DODC2A (Final Evaluation Report), National Computer Security Center, CSC-EPL88/009, July 1988. 
 This FER identified the following document as the SFUG for this product: 
-· Security Features User's Guide, 1st Edition for Revision 21.0, 1987. 
+ï¿½ Security Features User's Guide, 1st Edition for Revision 21.0, 1987. 
 15. UNlSYS Corporation A Series MCP/AS Release 3.7 (Final Evaluation Report), National Computer Security Center, CSC-EPL-87/003, August 1987. 
 This FER identified the following document as the SFUG for this product: 
-· A Series Security Features Operations and Programming Guide, Document Number 1195203, July 1987. 
+ï¿½ A Series Security Features Operations and Programming Guide, Document Number 1195203, July 1987. 
 16. UNlSYS Corporation OS 1100 (Final Evaluation Report), National Computer Security Center, CSC-EPL-89/004, September 1989. 
 This FER identified the following document as the SFUG for this product: 
 OS 1100 Security System Operations Guide, UP-I 3011.1, August 1989.

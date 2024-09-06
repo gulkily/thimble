@@ -17,8 +17,8 @@ Special thanks are extended to the many members of the computer security communi
 This Trusted Network Interpretation (TNI) Environments Guideline (TNIEG) addresses many issues in determining the security protection required in different network environments. It complements the TNI, just as the Trusted Computer System Evaluation Criteria (TCSEC) Environments Guideline [1] complements the TCSEC. The TNI interprets the TCSEC for networks; it contains all of the criteria in the TCSEC, adding interpretation and rationale to applying trust technology to network systems. In the same way that the TCSEC Environments Guideline provides gnidance on applying the TCSEC, this TNIEG provides gnidance on the use of the TNI. The TCSEC and its Environments Guideline constitute the foundation on which the TNI and TNIEG add network applicability. 
 1.1 Background
 The National Computer Security Center (NCSC) is responsible for establishing and maintaining technical standards and criteria for the evaluation of trusted computer systems. As part of this responsibility, the NCSC is developing guidance on how new security technology should be used. Two objectives of this guidance are: 
-· Establishing a metric for categorizing systems according to the security protection they provide, and 
-· Identifying the minimum security protection required in different environments. 
+ï¿½ Establishing a metric for categorizing systems according to the security protection they provide, and 
+ï¿½ Identifying the minimum security protection required in different environments. 
 The TCSEC [2] helps to satisfy the first objective by categorizing computer systems into hierarchical classes based on evaluation of their security features and assurances. The TCSEC Environments Guideline [1] helps to satisfy the second objective by identifying the minimum classes appropriate for systems in different risk environments. These two documents, however, apply to stand-alone corn puter systems. 
 The TNI [3] satisfies the first objective by interpreting the TCSEC for networks. 
 The TNI also provides guidance for selecting and specifying other security services (e.g., communications integrity, denial of service, transmission security). The TNIEG is the first step toward addressing the second objective. 
@@ -63,8 +63,8 @@ Any AIS that is connected to other AIS must enforce an "Interconnection Rule" th
 A component may support all the policy and accountability requirements: M, D, I, ad A4; however, as defined above, this is not applicable to determining whether an individual unit is a component. A component which supports some part of the security policy contains an NTCB partition. In the extreme, a component may not have any security-relevant function; in this case it doesn't support any TCSEC policy and doesn't contain an NTCB partition. 
 2.3.4 Definitions
 To summarize the previous discussions, following are definitions for component ad system/subsystem. 
-· Component: An individual physical unit that does not provide a complete set of end-user services. 
-· System/suhsystem: A collection of hardware, firmware, and software necessary configured to collect, create, communicate, compute, disseminate, process, store, and/or control data ad information [4]. 
+ï¿½ Component: An individual physical unit that does not provide a complete set of end-user services. 
+ï¿½ System/suhsystem: A collection of hardware, firmware, and software necessary configured to collect, create, communicate, compute, disseminate, process, store, and/or control data ad information [4]. 
 2.4 Evaluation
 NCSC-evaluation refers specifically to the process in which the NCSC determines whether a commercial-off-the-shelf (COTS) product satisfies the TCSE~C. Application of the TCSEC to a particular product may be assisted by an interpretation guideline such as the TNI [5]. In such a case, the guideline clarifies the meaing of the TCSEC's language with regard to a particular type of product, but in no case circumvents or grants exception to the requirements of the TCSEC. The purpose of an NCSC-evaluation is as follows: 
 4M:datory access control, discretionary access control, identification and authentication, and audit, respectively. 
@@ -126,24 +126,24 @@ AIS whose security managers are not hierarchically related may also be combined 
 3.2 Memorandum of Agreement
 If a network consists of previously accredited AIS, a MOA is required between the Accreditors for each subsystem. This MOA is part of the documentation of the NSAD. The MOA discusses the accreditation requirements for each subsystem that is to be interconnected to form the network [4], i.e., defines all the terms and conditions of the security arrangements that will govern the operation of the network [10]. The objective of the MOA is to document the interconnection requirements and identify any requirements that may be necessary to provide overall security safeguards for the entire network. This network includes all the interconnected subsystems, the communications devices, the usei-s, and the data stored in the subsystem 
 [10]. A Memorandum of Record (MOR) is used when the subsystems have the same Accreditor. A comprehensive M0A10 could constitute the entire NSAD for a network; alternatively, the MOA could contain high level agreements, with the details spelled out in supporting documents. Following is a list of suggestions for the contents of the MOA and supporting documents. The items towards the top of the list are more likely to occur in the MOA; those towards the end of the list are more likely to occur in supporting documents. 
-· A general description of the information that will be transmitted to the network by each subsystem 
-· A summary discussion of the trusted behavior that is expected from each subsystem 
-· The details of the overall security plan for the network and the assignment of responsibility for producing and accepting the plan 
-· A description of the overall network security policy 
-· A description of additional security training and assignment of training responsibility 
-· Specification of the security parameters that are to be transmitted between communicating subsystems 
-· A discussion of security details that are relevant to the exchange of information among the subsystems. 
-· A description of the user community, including the lowest clearance of any user who will have access to the network 
-· Any special considerations for dial-up connections to any subsystem in the network, including potential security threats and the safeguards that will be used. 
-· A description of the security protections provided by the data communications, both local to a subsystem and between communicating subsystem 
+ï¿½ A general description of the information that will be transmitted to the network by each subsystem 
+ï¿½ A summary discussion of the trusted behavior that is expected from each subsystem 
+ï¿½ The details of the overall security plan for the network and the assignment of responsibility for producing and accepting the plan 
+ï¿½ A description of the overall network security policy 
+ï¿½ A description of additional security training and assignment of training responsibility 
+ï¿½ Specification of the security parameters that are to be transmitted between communicating subsystems 
+ï¿½ A discussion of security details that are relevant to the exchange of information among the subsystems. 
+ï¿½ A description of the user community, including the lowest clearance of any user who will have access to the network 
+ï¿½ Any special considerations for dial-up connections to any subsystem in the network, including potential security threats and the safeguards that will be used. 
+ï¿½ A description of the security protections provided by the data communications, both local to a subsystem and between communicating subsystem 
 ________________ 
 10 In this guideline, NOA is used to identify the agreement between Accreditors and includes the NOR. 
 TNI Environments Guideline Network Security Architecture and Design 
-· A description of the information that each subsystem will log in the audit trail, and how the audit trail tasks will be divided among the subsystems 
-· A description of the information security services to be offered to the network by each subsystem, including: 
-· The types of processing provided by each subsystem, e.g., file query, individual user, general processing 
-· The modes of operation of all the subsystems, e.g., dedicated, system high, multilevel 
-· The sensitivity levels processed on all subsystems 
+ï¿½ A description of the information that each subsystem will log in the audit trail, and how the audit trail tasks will be divided among the subsystems 
+ï¿½ A description of the information security services to be offered to the network by each subsystem, including: 
+ï¿½ The types of processing provided by each subsystem, e.g., file query, individual user, general processing 
+ï¿½ The modes of operation of all the subsystems, e.g., dedicated, system high, multilevel 
+ï¿½ The sensitivity levels processed on all subsystems 
 4 TNI Part I Security Requirements
 This section assists the security manager in determining the recommended minimum security requirements based on TNI Part I and Appendix A, which interprets the TCSEC for networks. 
 The procedure for determining the minimum security requirements for a network parallels the procedure for a stand-alone system, whereby the highest classification of data and the lowest clearance among system users are used in computing a risk index. The risk index is used to determine which NCSC~vaIuation rating is required of the system to provide adequate security. To emphasize, these are the minimum requirements. The TCSEC Environments Guideline does not address environmental factors such as the number of users and the percentage of users at different classification levels. These factors may become more significant in a network environment. Communications security risk in a network is addressed by the National Security Agency (NSA) and other cognizant organizations and results in a set of recommendations for the appropriate equipment or security procedures. Other factors, such as the number of connections, the physical distance between devices, the number of subsystems, the presence of encryption, and the possible presence of intervening systems between the resources being used and the ultimate user may result in more or less stringent requirements. 
@@ -164,7 +164,7 @@ Step 6. Determine adjustments to computer security evaluation class required.
 An elaboration of step six given in Migues [14], involving a detailed analysis of both environmental and architectural risk factors, is based on Landwehr and Lubbes [15]. It presents a method which incorporates analysis of the applications environment. This analysis includes such factors as whether the system allows programming, or whether it is restricted to a limited set of applications. This more detailed information supports a finer determination of the level of trust required. 
 4.2 Determination of Network Risk
 To apply the TCSEC Environments Guideline guidance, the security manager must determine the following: 
-· minimum clearance or authorization of the network usefs (see Table 1 11), 
+ï¿½ minimum clearance or authorization of the network usefs (see Table 1 11), 
 TNI Environments Guideline TNI Part I Security Requirements 
 Table 1 
 Rating Scale for Minimum User Clearance ~m1n) 
@@ -175,7 +175,7 @@ Uncleared OR Not Authorized (U)      0
 Not Cleared but Authorized Access    1                                     
 to Sensitive                                                               
 
-Confidential ©                                                             
+Confidential ï¿½                                                             
 
 Secret(S)                            3                                     
 
@@ -190,7 +190,7 @@ One Category (IC)                    6
 Multiple Categories (MC)              7                                    
 
 
-· maximum sensitivity of data processed by the network (see Table 2) (the TCSEC Environments Guideline distinguishes between an open system and a closed system based on whether application development was done by cleared or uncleared users; the distinction was dropped in DODD 5200.28 and is not used here either). 
+ï¿½ maximum sensitivity of data processed by the network (see Table 2) (the TCSEC Environments Guideline distinguishes between an open system and a closed system based on whether application development was done by cleared or uncleared users; the distinction was dropped in DODD 5200.28 and is not used here either). 
 The number derived from Table 1 is used for Rmin; the one derived from Table 2 
 is used for Rmax. A risk index for the network is calculated using the following formula: 
 Risk Index = Rmax - Rmin 
@@ -285,7 +285,7 @@ Risk Index               Security Mode             Minimum Security Class
 3 Where an AI$ handles classified or compartmented data and some users do not have at least a Confi-dential clearance, or when there are more than two types of compartmented information being handled, at least a class B2 is required. 
 4 The asterisk (*) indicates that computer protection for environments with that risk index is considered to be beyond the state of current computer security technology. 
 5 Most embedded systems and desk top computers operate in the dedicated mode. 
-Table 3 12 is used, along with the Risk Index calculated above, to determine a minimum NCSC-evaluation rating for the system. Note that some terms that appear m the TCSEC Environments Guideline are no longer defined in DODD 5200.28. (Limited Access Mode, and Compartmented Mode fall under the heading of Partitioned Mode. Controlled Mode comes under the heading Multilevel. The prevt.ou:°sly used terms referred to the equivalent of the BI and B2 evaluation classes. In DODD 5200.28, Partitioned Mode is used in place of Compartmented Mode.) 
+Table 3 12 is used, along with the Risk Index calculated above, to determine a minimum NCSC-evaluation rating for the system. Note that some terms that appear m the TCSEC Environments Guideline are no longer defined in DODD 5200.28. (Limited Access Mode, and Compartmented Mode fall under the heading of Partitioned Mode. Controlled Mode comes under the heading Multilevel. The prevt.ou:ï¿½sly used terms referred to the equivalent of the BI and B2 evaluation classes. In DODD 5200.28, Partitioned Mode is used in place of Compartmented Mode.) 
 ____________________ 
 12 Table 3 is adapted from the TCSEC Environments Guideline 
 5 TNI Part II Security Requirements
@@ -404,7 +404,7 @@ to Sensitive
 
 Unclassified Information (N)                                               
 
-Confidential ©                       2                                     
+Confidential ï¿½                       2                                     
 
 Secret (S)                            3                                    
 
@@ -453,7 +453,7 @@ Risk Index = Rmax - Rmin
 Table 7 
 Minimum Strength of Mechanism Requirement 
 Risk Strength of 
-· None 
+ï¿½ None 
 1 Minimum 
 2 Fair 
 >2 Good 
@@ -466,7 +466,7 @@ Table 8
 Minimum Assurance Requirements 
 Risk Part II 
 Index Assurance Rating 
-· None 
+ï¿½ None 
 1 Minimum 
 2 Fair 
 >2 Good 
@@ -578,7 +578,7 @@ C
 C2 Evaluation Class B3 
 S Accreditation Range TS-C 
 SH Operating Mode MLS 
-As shown in Figure 1, an AIS may contain information at levels that are below its accreditation range. For example, a C2 host which contsuns Secret (S) and Confidential © information, is not trusted to segregate this confidential and Secret information. Therefore, it is accredited to operate in system high (SH) mode at Secret (the highest sensitivity level of information on the system), and its accreditation range is the single level Secret. All exported information must be labeled with the system high sensitivity label until there is a manual review to assign the information a lower 14 Often in the discussion it is not appropriate to distinguish between a component and a sub-system; in that case we use the term device. 
+As shown in Figure 1, an AIS may contain information at levels that are below its accreditation range. For example, a C2 host which contsuns Secret (S) and Confidential ï¿½ information, is not trusted to segregate this confidential and Secret information. Therefore, it is accredited to operate in system high (SH) mode at Secret (the highest sensitivity level of information on the system), and its accreditation range is the single level Secret. All exported information must be labeled with the system high sensitivity label until there is a manual review to assign the information a lower 14 Often in the discussion it is not appropriate to distinguish between a component and a sub-system; in that case we use the term device. 
 classification level. In contrast, a B3 multilevel secure (MLS) host, which contains Top Secret (TS), Secret, and Confidential information could be assigned an accreditation range equal to the entire set of levels processed. In this case, the label of the exported data is equal to the actual level of the exported data, unless unclassified data is to be exported. 
 Figure 2 illustrates the accreditation ranges of two interconnected subsystems. 
 Although Subsystem Y is able to separate its three levels of information, it may exchange information with Subsystem X only at the S and C levels. 
@@ -624,7 +624,7 @@ Bidirectional and Unidirectional Information Flow
 Subsystem X Subsystem Y 
 TS (C or U) C 
 U
-SH (TS) Subsystem Z © MLS (C-U) 
+SH (TS) Subsystem Z ï¿½ MLS (C-U) 
 TS 
 S 
 C 

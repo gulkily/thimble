@@ -113,16 +113,16 @@ creating a TCP/IP service access policy, using strong
 authentication, and using a secure Internet gateway that can imple-
 ment network access policies.
 
-  иммммммммммммЧService Access PolicyЧмммммммммммм╩
-  ╨ зддддддддддддддддд©                           ╨
-  ╨ Ё                 Ё                           ╨
-  ╨ Ё     Local       Ё              здддддддддд© ╨
-  ╨ Ё     Area        Ё    strong    Ё  Secure  цдвдЧ INTERNET
-  ╨ Ё     Network     ЁauthenticationЁ  Gateway цдвдЧ OSI WANs
-  ╨ Ё     Systems     Ё              юдддддддддды ╨
-  ╨ Ё                 Ё                           ╨
-  ╨ юддддддддддддддддды                           ╨
-  хммммммммммммммммммммммммммммммммммммммммммммммм╪
+  О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫Service Access PolicyО©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫м╩
+  О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫д©                           О©╫
+  О©╫ О©╫                 О©╫                           О©╫
+  О©╫ О©╫     Local       О©╫              О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫д© О©╫
+  О©╫ О©╫     Area        О©╫    strong    О©╫  Secure  О©╫О©╫О©╫О©╫О©╫ INTERNET
+  О©╫ О©╫     Network     О©╫authenticationО©╫  Gateway О©╫О©╫О©╫О©╫О©╫ OSI WANs
+  О©╫ О©╫     Systems     О©╫              О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫ О©╫
+  О©╫ О©╫                 О©╫                           О©╫
+  О©╫ О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫                           О©╫
+  О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫О©╫м╪
 
 Network Service Policy:  The first step is to create a policy that
 details what types of connectivity will be permitted.  If, for
