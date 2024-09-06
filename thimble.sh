@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# thimble.sh
+# to use: source thimble.sh
+
 # Define command-script pairs
 declare -A command_scripts
 command_scripts=(
@@ -99,3 +102,5 @@ t() {
 alias t=t
 
 echo "Thimble script loaded. Use 't <command>' to run commands."
+
+# end of thimble.sh
