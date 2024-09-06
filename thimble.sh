@@ -1,15 +1,21 @@
 #!/bin/bash
 
-# Global variable to store the path of the started server script
-STARTED_SERVER_SCRIPT=""
+# Define command-script pairs
+declare -A command_scripts
+command_scripts=(
+    ["start"]="start_server"
+    # Add new commands here in the format:
+    # ["command_name"]="script_name"
+)
 
-# Function to find and run a random start_server script
-start_server() {
-    # Find all start_server.* scripts
-    scripts=($(find . -maxdepth 1 -name "start_server.*"))
+# Function to find and run a script
+run_script() {
+    script_name="$1"
+    # Find all scripts matching the name
+    readarray -t scripts < <(find template -name "${script_name}.*")
 
     if [ ${#scripts[@]} -eq 0 ]; then
-        echo "No start_server scripts found."
+        echo "No ${script_name} scripts found."
         return 1
     fi
 
@@ -39,7 +45,7 @@ start_server() {
     done
 
     if [ ${#available_scripts[@]} -eq 0 ]; then
-        echo "No compatible start_server scripts found for the current environment."
+        echo "No compatible ${script_name} scripts found for the current environment."
         return 1
     fi
 
@@ -47,7 +53,6 @@ start_server() {
     random_script=${available_scripts[$RANDOM % ${#available_scripts[@]}]}
 
     echo "Running: $random_script"
-    STARTED_SERVER_SCRIPT="$random_script"
     case "${random_script##*.}" in
         py)
             python "$random_script"
@@ -70,62 +75,24 @@ start_server() {
     esac
 }
 
-# Function to stop the server
-stop_server() {
-    if [ -z "$STARTED_SERVER_SCRIPT" ]; then
-        echo "No server is currently running."
-        return 1
-    fi
-
-    # Construct the stop script name
-    stop_script="${STARTED_SERVER_SCRIPT/start_server/stop_server}"
-
-    if [ ! -f "$stop_script" ]; then
-        echo "Stop script not found: $stop_script"
-        return 1
-    fi
-
-    echo "Stopping server with: $stop_script"
-    case "${stop_script##*.}" in
-        py)
-            python "$stop_script"
-            ;;
-        pl)
-            perl "$stop_script"
-            ;;
-        rb)
-            ruby "$stop_script"
-            ;;
-        js)
-            node "$stop_script"
-            ;;
-        sh)
-            bash "$stop_script"
-            ;;
-        php)
-            php "$stop_script"
-            ;;
-    esac
-
-    STARTED_SERVER_SCRIPT=""
-}
-
 # Main function to handle subcommands
 t() {
-    case "$1" in
-        start)
-            start_server
-            ;;
-        stop)
-            stop_server
-            ;;
-        *)
-            echo "Usage: t <command>"
-            echo "Available commands:"
-            echo "  start - Start the server"
-            echo "  stop  - Stop the server"
-            ;;
-    esac
+    if [ -z "$1" ]; then
+        echo "Usage: t <command>"
+        echo "Available commands:"
+        for cmd in "${!command_scripts[@]}"; do
+            echo "  $cmd"
+        done
+        return
+    fi
+
+    script_name="${command_scripts[$1]}"
+    if [ -n "$script_name" ]; then
+        run_script "$script_name"
+    else
+        echo "Unknown command: $1"
+        echo "Use 't' without arguments to see available commands."
+    fi
 }
 
 # Create the alias
