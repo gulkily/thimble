@@ -45,7 +45,7 @@ def process_directory(directory):
 
 if __name__ == "__main__":
 	if len(sys.argv) != 2:
-		print("Usage: python convert_indentation.py <directory>")
+		print("Usage: python fix_indent.py <directory>")
 		sys.exit(1)
 
 	directory = sys.argv[1]
