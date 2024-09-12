@@ -38,7 +38,7 @@ def convert_spaces_to_tabs(file_path):
 def process_directory(directory):
 	for root, dirs, files in os.walk(directory):
 		for file in files:
-			if file.endswith(('.py', '.js', '.sh', '.txt', '.html', '.php', '.pl', '.rb', '.css')):
+			if file.endswith(('.py', '.js', '.html', '.php', '.pl', '.rb', '.css')):
 				file_path = os.path.join(root, file)
 				print(f"Converting space indentation to tabs in: {file_path}")
 				convert_spaces_to_tabs(file_path)
