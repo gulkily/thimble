@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 
-# fix_indent.pl
+# fix_indent.pl v1
 # to use: perl fix_indent.pl <directory>
 
 use strict;
@@ -75,3 +75,5 @@ unless (-d $directory) {
 
 process_directory($directory);
 print "Indentation conversion complete.\n";
+
+# end of fix_indent.pl
