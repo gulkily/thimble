@@ -38,12 +38,12 @@ require 'fileutils'
 require 'securerandom'
 
 class CustomHTTPHandler < WEBrick::HTTPServlet::FileHandler
-  def initialize(server, root)
+	def initialize(server, root)
 	super
 	@root = root
-  end
+	end
 
-  def do_GET(req, res)
+	def do_GET(req, res)
 	case req.path
 	when '/'
 	  super
@@ -65,18 +65,18 @@ class CustomHTTPHandler < WEBrick::HTTPServlet::FileHandler
 		super
 	  end
 	end
-  end
+	end
 
-  def do_POST(req, res)
+	def do_POST(req, res)
 	if req.path == '/chat.html'
 	  handle_chat_post(req, res)
 	else
 	  res.status = 405
 	  res.body = "Method Not Allowed"
 	end
-  end
+	end
 
-  def handle_chat_post(req, res)
+	def handle_chat_post(req, res)
 	params = CGI.parse(req.body)
 	author = params['author']&.first || ''
 	message = params['message']&.first || ''
@@ -93,9 +93,9 @@ class CustomHTTPHandler < WEBrick::HTTPServlet::FileHandler
 	  res.status = 400
 	  res.body = "Bad Request: Missing author or message"
 	end
-  end
+	end
 
-  def save_message(author, message)
+	def save_message(author, message)
 	today = Time.now.strftime('%Y-%m-%d')
 	directory = File.join(@root, 'message', today)
 	FileUtils.mkdir_p(directory)
@@ -108,17 +108,17 @@ class CustomHTTPHandler < WEBrick::HTTPServlet::FileHandler
 	  f.puts message
 	  f.puts "\n\nauthor: #{author}"
 	end
-  end
+	end
 
-  def generate_title(message)
+	def generate_title(message)
 	words = message.split.take(5)
 	title = words.join('_')
 	title = title.gsub(/[^0-9A-Za-z_-]/, '')
 	title = SecureRandom.alphanumeric(10) if title.empty?
 	title
-  end
+	end
 
-  def check_and_generate_report
+	def check_and_generate_report
 	html_file = File.join(@root, 'log.html')
 	if !File.exist?(html_file) || Time.now - File.mtime(html_file) > 60
 	  puts "#{html_file} is older than 60 seconds or does not exist. Running log.html.rb..."
@@ -126,9 +126,9 @@ class CustomHTTPHandler < WEBrick::HTTPServlet::FileHandler
 	else
 	  puts "#{html_file} is up-to-date."
 	end
-  end
+	end
 
-  def check_and_generate_chat_html
+	def check_and_generate_chat_html
 	chat_html_file = File.join(@root, 'chat.html')
 	if !File.exist?(chat_html_file) || Time.now - File.mtime(chat_html_file) > 60
 	  puts "#{chat_html_file} is older than 60 seconds or does not exist. Running chat.html.rb..."
@@ -136,9 +136,9 @@ class CustomHTTPHandler < WEBrick::HTTPServlet::FileHandler
 	else
 	  puts "#{chat_html_file} is up-to-date."
 	end
-  end
+	end
 
-  def serve_text_file(req, res)
+	def serve_text_file(req, res)
 	path = File.join(@root, req.path)
 	if File.exist?(path)
 	  content = File.read(path, encoding: 'utf-8')
@@ -164,60 +164,60 @@ class CustomHTTPHandler < WEBrick::HTTPServlet::FileHandler
 	else
 	  raise WEBrick::HTTPStatus::NotFound
 	end
-  end
+	end
 end
 
 def is_port_in_use?(port)
-  TCPServer.new('localhost', port).close
-  false
+	TCPServer.new('localhost', port).close
+	false
 rescue Errno::EADDRINUSE
-  true
+	true
 end
 
 def find_available_port(start_port)
-  port = start_port
-  port += 1 while is_port_in_use?(port)
-  port
+	port = start_port
+	port += 1 while is_port_in_use?(port)
+	port
 end
 
 def run_server(port, directory)
-  Dir.chdir(directory)
-  server = WEBrick::HTTPServer.new(Port: port, DocumentRoot: directory)
-  server.mount('/', CustomHTTPHandler, directory)
+	Dir.chdir(directory)
+	server = WEBrick::HTTPServer.new(Port: port, DocumentRoot: directory)
+	server.mount('/', CustomHTTPHandler, directory)
 
-  trap('INT') do
+	trap('INT') do
 	puts "\nShutting down server..."
 	server.shutdown
-  end
+	end
 
-  puts "Serving HTTP on 0.0.0.0 port #{port} (http://0.0.0.0:#{port}/) ..."
-  server.start
+	puts "Serving HTTP on 0.0.0.0 port #{port} (http://0.0.0.0:#{port}/) ..."
+	server.start
 rescue Errno::EADDRINUSE
-  puts "Port #{port} is already in use."
-  false
+	puts "Port #{port} is already in use."
+	false
 end
 
 if __FILE__ == $PROGRAM_NAME
-  options = {}
-  OptionParser.new do |opts|
+	options = {}
+	OptionParser.new do |opts|
 	opts.banner = "Usage: ruby script.rb [options]"
 	opts.on("-p", "--port PORT", Integer, "Port to serve on (default: 8000)") { |p| options[:port] = p }
 	opts.on("-d", "--directory DIR", String, "Directory to serve (default: current directory)") { |d| options[:directory] = d }
-  end.parse!
+	end.parse!
 
-  directory = options[:directory] || Dir.pwd
+	directory = options[:directory] || Dir.pwd
 
-  if options[:port]
+	if options[:port]
 	if is_port_in_use?(options[:port])
 	  puts "Port #{options[:port]} is already in use. Please choose a different port."
 	else
 	  run_server(options[:port], directory)
 	end
-  else
+	else
 	port = 8000
 	port = find_available_port(port) if is_port_in_use?(port)
 	run_server(port, directory)
-  end
+	end
 end
 
 # end of start_server.rb

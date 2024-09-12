@@ -31,31 +31,31 @@
 require 'open3'
 
 def run_command(command)
-  stdout, stderr, status = Open3.capture3(command)
-  if status.success?
-    stdout.strip
-  else
-    puts "Error executing command: #{command}"
-    puts "Error message: #{stderr}"
-    nil
-  end
+	stdout, stderr, status = Open3.capture3(command)
+	if status.success?
+		stdout.strip
+	else
+		puts "Error executing command: #{command}"
+		puts "Error message: #{stderr}"
+		nil
+	end
 end
 
 def is_git_repo?
-  run_command("git rev-parse --is-inside-work-tree") != nil
+	run_command("git rev-parse --is-inside-work-tree") != nil
 end
 
 if ARGV.length != 1
-  puts "Usage: #{$PROGRAM_NAME} <repository_path>"
-  exit 1
+	puts "Usage: #{$PROGRAM_NAME} <repository_path>"
+	exit 1
 end
 
 repo_path = ARGV[0]
 Dir.chdir(repo_path) or abort "Cannot change to directory #{repo_path}: #{$!}"
 
 unless is_git_repo?
-  puts "Error: Not a Git repository"
-  exit 1
+	puts "Error: Not a Git repository"
+	exit 1
 end
 
 # Get the main branch name

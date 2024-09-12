@@ -125,23 +125,23 @@ class CustomHTTPRequestHandler {
 	private function generateHtmlForTextFile($filename, $content) {
 		$escapedContent = htmlspecialchars($content);
 		return <<<HTML
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>$filename</title>
-            <style>
-                body { font-family: Arial, sans-serif; line-height: 1.6; padding: 20px; }
-                pre { background-color: #f4f4f4; padding: 15px; border-radius: 5px; white-space: pre-wrap; word-wrap: break-word; }
-            </style>
-        </head>
-        <body>
-            <h1>$filename</h1>
-            <pre>$escapedContent</pre>
-        </body>
-        </html>
-        HTML;
+	<!DOCTYPE html>
+	<html lang="en">
+	<head>
+	    <meta charset="UTF-8">
+	    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	    <title>$filename</title>
+	    <style>
+		body { font-family: Arial, sans-serif; line-height: 1.6; padding: 20px; }
+		pre { background-color: #f4f4f4; padding: 15px; border-radius: 5px; white-space: pre-wrap; word-wrap: break-word; }
+	    </style>
+	</head>
+	<body>
+	    <h1>$filename</h1>
+	    <pre>$escapedContent</pre>
+	</body>
+	</html>
+	HTML;
 	}
 
 	private function sendNotFound() {

@@ -1,108 +1,108 @@
 body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f0f0f0;
+	font-family: Arial, sans-serif;
+	margin: 0;
+	padding: 0;
+	background-color: #f0f0f0;
 }
 
 .chat-container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: white;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+	max-width: 800px;
+	margin: 0 auto;
+	padding: 20px;
+	background-color: white;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 h1 {
-    text-align: center;
-    color: #333;
+	text-align: center;
+	color: #333;
 }
 
 .chat-messages {
-    margin-bottom: 20px;
+	margin-bottom: 20px;
 }
 
 .message {
-    background-color: #e6e6e6;
-    border-radius: 5px;
-    padding: 10px;
-    margin-bottom: 10px;
+	background-color: #e6e6e6;
+	border-radius: 5px;
+	padding: 10px;
+	margin-bottom: 10px;
 }
 
 .message-header {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 5px;
+	display: flex;
+	justify-content: space-between;
+	margin-bottom: 5px;
 }
 
 .author {
-    font-weight: bold;
-    color: #333;
+	font-weight: bold;
+	color: #333;
 }
 
 .timestamp {
-    color: #777;
-    font-size: 0.8em;
+	color: #777;
+	font-size: 0.8em;
 }
 
 .message-content {
-    margin-bottom: 5px;
+	margin-bottom: 5px;
 }
 
 .message-hashtags {
-    color: #0066cc;
-    font-size: 0.9em;
+	color: #0066cc;
+	font-size: 0.9em;
 }
 
 .message-form {
-    margin-top: 20px;
+	margin-top: 20px;
 }
 
 .message-form form {
-    display: flex;
-    flex-direction: column;
+	display: flex;
+	flex-direction: column;
 }
 
 .message-form input,
 .message-form textarea {
-    margin-bottom: 10px;
-    padding: 5px;
+	margin-bottom: 10px;
+	padding: 5px;
 }
 
 .message-form button {
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    padding: 10px;
-    cursor: pointer;
+	background-color: #4CAF50;
+	color: white;
+	border: none;
+	padding: 10px;
+	cursor: pointer;
 }
 
 .message-form button:hover {
-    background-color: #45a049;
+	background-color: #45a049;
 }
 
 .chat-info {
-    margin-top: 20px;
-    text-align: center;
-    color: #777;
-    font-size: 0.9em;
+	margin-top: 20px;
+	text-align: center;
+	color: #777;
+	font-size: 0.9em;
 }
 .chat-messages {
-    height: 400px; /* Adjust this value as needed */
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column-reverse;
+	height: 400px; /* Adjust this value as needed */
+	overflow-y: auto;
+	display: flex;
+	flex-direction: column-reverse;
 }
 .messages-wrapper {
-    display: flex;
-    flex-direction: column;
+	display: flex;
+	flex-direction: column;
 }
 .expand-link {
-    color: #0066cc;
-    text-decoration: none;
-    cursor: pointer;
+	color: #0066cc;
+	text-decoration: none;
+	cursor: pointer;
 }
 
 .full-message {
-    margin-top: 10px;
+	margin-top: 10px;
 }

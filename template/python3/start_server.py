@@ -145,42 +145,42 @@ class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
 
 
 def is_port_in_use(port):
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-        return s.connect_ex(('localhost', port)) == 0
+	with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+		return s.connect_ex(('localhost', port)) == 0
 
 def find_available_port(start_port):
-    port = start_port
-    while is_port_in_use(port):
-        port += 1
-    return port
+	port = start_port
+	while is_port_in_use(port):
+		port += 1
+	return port
 
 def run_server(port, directory):
-    os.chdir(directory)
-    handler = CustomHTTPRequestHandler
-    try:
-        with socketserver.TCPServer(("", port), handler) as httpd:
-            print(f"Serving HTTP on 0.0.0.0 port {port} (http://0.0.0.0:{port}/) ...")
-            httpd.serve_forever()
-    except OSError as e:
-        if e.errno == 98:  # Address already in use
-            print(f"Port {port} is already in use.")
-            return False
-    return True
+	os.chdir(directory)
+	handler = CustomHTTPRequestHandler
+	try:
+		with socketserver.TCPServer(("", port), handler) as httpd:
+			print(f"Serving HTTP on 0.0.0.0 port {port} (http://0.0.0.0:{port}/) ...")
+			httpd.serve_forever()
+	except OSError as e:
+		if e.errno == 98:  # Address already in use
+			print(f"Port {port} is already in use.")
+			return False
+	return True
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Run a simple HTTP server.")
-    parser.add_argument('-p', '--port', type=int, help='Port to serve on (default: 8000)')
-    parser.add_argument('-d', '--directory', type=str, default=os.getcwd(), help='Directory to serve (default: current directory)')
+	parser = argparse.ArgumentParser(description="Run a simple HTTP server.")
+	parser.add_argument('-p', '--port', type=int, help='Port to serve on (default: 8000)')
+	parser.add_argument('-d', '--directory', type=str, default=os.getcwd(), help='Directory to serve (default: current directory)')
 
-    args = parser.parse_args()
+	args = parser.parse_args()
 
-    if args.port:
-        if not run_server(args.port, args.directory):
-            print(f"Failed to start server on specified port {args.port}.")
-    else:
-        port = 8000
-        while not run_server(port, args.directory):
-            port = find_available_port(port + 1)
-            print(f"Trying port {port}...")
+	if args.port:
+		if not run_server(args.port, args.directory):
+			print(f"Failed to start server on specified port {args.port}.")
+	else:
+		port = 8000
+		while not run_server(port, args.directory):
+			port = find_available_port(port + 1)
+			print(f"Trying port {port}...")
 
 # end of start_server.py

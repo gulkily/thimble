@@ -32,32 +32,32 @@ use warnings;
 use Cwd;
 
 sub run_command {
-    my $command = shift;
-    my $output = `$command 2>&1`;
-    if ($? != 0) {
-        print "Error executing command: $command\n";
-        print "Error message: $output\n";
-        return undef;
-    }
-    chomp $output;
-    return $output;
+	my $command = shift;
+	my $output = `$command 2>&1`;
+	if ($? != 0) {
+		print "Error executing command: $command\n";
+		print "Error message: $output\n";
+		return undef;
+	}
+	chomp $output;
+	return $output;
 }
 
 sub is_git_repo {
-    return defined run_command("git rev-parse --is-inside-work-tree");
+	return defined run_command("git rev-parse --is-inside-work-tree");
 }
 
 my $repo_path = $ARGV[0];
 if (!defined $repo_path) {
-    print "Usage: $0 <repository_path>\n";
-    exit 1;
+	print "Usage: $0 <repository_path>\n";
+	exit 1;
 }
 
 chdir $repo_path or die "Cannot change to directory $repo_path: $!";
 
 if (!is_git_repo()) {
-    print "Error: Not a Git repository\n";
-    exit 1;
+	print "Error: Not a Git repository\n";
+	exit 1;
 }
 
 # Get the main branch name

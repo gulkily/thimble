@@ -30,21 +30,21 @@ set -e
 
 repo_path="$1"
 if [ -z "$repo_path" ]; then
-    echo "Usage: $0 <repository_path>"
-    exit 1
+	echo "Usage: $0 <repository_path>"
+	exit 1
 fi
 
 cd "$repo_path"
 
 # Function to check if we're in a Git repository
 is_git_repo() {
-    git rev-parse --is-inside-work-tree &>/dev/null
+	git rev-parse --is-inside-work-tree &>/dev/null
 }
 
 # Check if we're in a Git repository
 if ! is_git_repo; then
-    echo "Error: Not a Git repository"
-    exit 1
+	echo "Error: Not a Git repository"
+	exit 1
 fi
 
 # Ensure we're on the main branch
