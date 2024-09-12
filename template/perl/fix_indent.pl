@@ -9,18 +9,18 @@ use File::Find;
 use File::Spec;
 
 sub convert_spaces_to_tabs {
-    my ($file_path) = @_;
+	my ($file_path) = @_;
 
-    # Read the file content
-    open my $file, '<', $file_path or die "Cannot open file $file_path: $!";
-    my $content = do { local $/; <$file> };
-    close $file;
+	# Read the file content
+	open my $file, '<', $file_path or die "Cannot open file $file_path: $!";
+	my $content = do { local $/; <$file> };
+	close $file;
 
-    my $lines_changed = 0;
+	my $lines_changed = 0;
 
-    # Detect the most common space indentation
-    my @space_indents = $content =~ /^( +)/mg;
-    if (@space_indents) {
+	# Detect the most common space indentation
+	my @space_indents = $content =~ /^( +)/mg;
+	if (@space_indents) {
 	my %count;
 	$count{$_}++ for @space_indents;
 	my $most_common_indent = (sort { $count{$b} <=> $count{$a} } keys %count)[0];
@@ -45,15 +45,15 @@ sub convert_spaces_to_tabs {
 	open $file, '>', $file_path or die "Cannot open file $file_path for writing: $!";
 	print $file $converted_content;
 	close $file;
-    }
+	}
 
-    return $lines_changed;
+	return $lines_changed;
 }
 
 sub process_directory {
-    my ($directory) = @_;
+	my ($directory) = @_;
 
-    find(
+	find(
 	{
 	    wanted => sub {
 		return unless -f;
@@ -67,16 +67,16 @@ sub process_directory {
 	    no_chdir => 1,
 	},
 	$directory
-    );
+	);
 }
 
 if (@ARGV != 1) {
-    die "Usage: perl fix_indent.pl <directory>\n";
+	die "Usage: perl fix_indent.pl <directory>\n";
 }
 
 my $directory = $ARGV[0];
 unless (-d $directory) {
-    die "Error: $directory is not a valid directory\n";
+	die "Error: $directory is not a valid directory\n";
 }
 
 process_directory($directory);
