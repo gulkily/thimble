@@ -1,192 +1,192 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thimble Messaging Platform</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-            color: #333;
-        }
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Thimble Messaging Platform</title>
+	<style>
+	body {
+	font-family: Arial, sans-serif;
+	line-height: 1.6;
+	margin: 0;
+	padding: 0;
+	background-color: #f4f4f4;
+	color: #333;
+	}
 
-        .container {
-            width: 80%;
-            margin: auto;
-            overflow: hidden;
-            padding: 20px;
-        }
+	.container {
+	width: 80%;
+	margin: auto;
+	overflow: hidden;
+	padding: 20px;
+	}
 
-        header {
-            background: #35424a;
-            color: #ffffff;
-            padding-top: 30px;
-            min-height: 70px;
-            border-bottom: #e8491d 3px solid;
-        }
+	header {
+	background: #35424a;
+	color: #ffffff;
+	padding-top: 30px;
+	min-height: 70px;
+	border-bottom: #e8491d 3px solid;
+	}
 
-        header h1 {
-            margin: 0;
-            text-align: center;
-        }
+	header h1 {
+	margin: 0;
+	text-align: center;
+	}
 
-        h1 {
-            font-size: 24px;
-            margin-bottom: 20px;
-        }
+	h1 {
+	font-size: 24px;
+	margin-bottom: 20px;
+	}
 
-        .button-container {
-            display: flex;
-            justify-content: space-around;
-            margin-top: 50px;
-        }
+	.button-container {
+	display: flex;
+	justify-content: space-around;
+	margin-top: 50px;
+	}
 
-        .button {
-            display: inline-block;
-            padding: 15px 25px;
-            font-size: 18px;
-            cursor: pointer;
-            text-align: center;
-            text-decoration: none;
-            outline: none;
-            color: #fff;
-            background-color: #4CAF50;
-            border: none;
-            border-radius: 15px;
-            box-shadow: 0 9px #999;
-            transition: background-color 0.3s, box-shadow 0.3s, transform 0.3s;
-        }
+	.button {
+	display: inline-block;
+	padding: 15px 25px;
+	font-size: 18px;
+	cursor: pointer;
+	text-align: center;
+	text-decoration: none;
+	outline: none;
+	color: #fff;
+	background-color: #4CAF50;
+	border: none;
+	border-radius: 15px;
+	box-shadow: 0 9px #999;
+	transition: background-color 0.3s, box-shadow 0.3s, transform 0.3s;
+	}
 
-        .button:hover {
-            background-color: #3e8e41;
-        }
+	.button:hover {
+	background-color: #3e8e41;
+	}
 
-        .button:active {
-            background-color: #3e8e41;
-            box-shadow: 0 5px #666;
-            transform: translateY(4px);
-        }
+	.button:active {
+	background-color: #3e8e41;
+	box-shadow: 0 5px #666;
+	transform: translateY(4px);
+	}
 
-        table {
-            border-collapse: collapse;
-            width: 100%;
-            margin-top: 20px;
-        }
+	table {
+	border-collapse: collapse;
+	width: 100%;
+	margin-top: 20px;
+	}
 
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
+	th, td {
+	border: 1px solid #ddd;
+	padding: 8px;
+	text-align: left;
+	}
 
-        th {
-            background-color: #f2f2f2;
-            font-weight: bold;
-        }
+	th {
+	background-color: #f2f2f2;
+	font-weight: bold;
+	}
 
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
+	tr:nth-child(even) {
+	background-color: #f9f9f9;
+	}
 
-        .status-bar {
-            background-color: #f2f2f2;
-            padding: 10px;
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            font-size: 0.9em;
-            text-align: center;
-            border-top: 1px solid #ddd;
-        }
+	.status-bar {
+	background-color: #f2f2f2;
+	padding: 10px;
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	font-size: 0.9em;
+	text-align: center;
+	border-top: 1px solid #ddd;
+	}
 
-        /* Dark mode */
-        @media (prefers-color-scheme: dark) {
-            body {
-                background-color: #1a1a1a;
-                color: #808080;
-            }
+	/* Dark mode */
+	@media (prefers-color-scheme: dark) {
+	body {
+	    background-color: #1a1a1a;
+	    color: #808080;
+	}
 
-            header {
-                background: #2a2a2a;
-                border-bottom-color: #603000;
-            }
+	header {
+	    background: #2a2a2a;
+	    border-bottom-color: #603000;
+	}
 
-            h1 {
-                color: #808080;
-            }
+	h1 {
+	    color: #808080;
+	}
 
-            .button {
-                background-color: #004000;
-                box-shadow: 0 9px #303030;
-                color: #808080;
-            }
+	.button {
+	    background-color: #004000;
+	    box-shadow: 0 9px #303030;
+	    color: #808080;
+	}
 
-            .button:hover {
-                background-color: #1b5e20;
-            }
+	.button:hover {
+	    background-color: #1b5e20;
+	}
 
-            .button:active {
-                background-color: #1b5e20;
-                box-shadow: 0 5px #333;
-            }
+	.button:active {
+	    background-color: #1b5e20;
+	    box-shadow: 0 5px #333;
+	}
 
-            table {
-                border-color: #444;
-            }
+	table {
+	    border-color: #444;
+	}
 
-            th, td {
-                border-color: #444;
-            }
+	th, td {
+	    border-color: #444;
+	}
 
-            th {
-                background-color: #2a2a2a;
-            }
+	th {
+	    background-color: #2a2a2a;
+	}
 
-            tr:nth-child(even) {
-                background-color: #222;
-            }
+	tr:nth-child(even) {
+	    background-color: #222;
+	}
 
-            tr:hover {
-                background-color: #333;
-            }
+	tr:hover {
+	    background-color: #333;
+	}
 
-            .status-bar {
-                background-color: #2a2a2a;
-                color: #e0e0e0;
-                border-top-color: #444;
-            }
+	.status-bar {
+	    background-color: #2a2a2a;
+	    color: #e0e0e0;
+	    border-top-color: #444;
+	}
 
-            a {
-                color: #81c784;
-            }
+	a {
+	    color: #81c784;
+	}
 
-            a:hover {
-                color: #a5d6a7;
-            }
-        }
-    </style>
+	a:hover {
+	    color: #a5d6a7;
+	}
+	}
+	</style>
 </head>
 <body>
-    <header>
-        <div class="container">
-            <h1>Welcome to Thimble</h1>
-        </div>
-    </header>
+	<header>
+	<div class="container">
+	<h1>Welcome to Thimble</h1>
+	</div>
+	</header>
 
-    <div class="container">
-        <h2>Your Messaging Platform</h2>
-        <p>Access secure communication channels and monitor activity with our state-of-the-art platform.</p>
-        
-        <div class="button-container">
-            <a href="/log.html" class="button">Audit Log</a>
-            <a href="/chat.html" class="button">Chat Application</a>
-            <a href="/system.html" class="button">System Status</a>
-        </div>
-    </div>
+	<div class="container">
+	<h2>Your Messaging Platform</h2>
+	<p>Access secure communication channels and monitor activity with our state-of-the-art platform.</p>
+	
+	<div class="button-container">
+	<a href="/log.html" class="button">Audit Log</a>
+	<a href="/chat.html" class="button">Chat Application</a>
+	<a href="/system.html" class="button">System Status</a>
+	</div>
+	</div>
 </body>
 </html>
