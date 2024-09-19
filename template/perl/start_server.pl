@@ -3,7 +3,7 @@
 # start_server.pl
 # to run: perl start_server.pl
 
-# start_server: v3
+# start_server: v4
 
 use strict;
 use warnings;
@@ -71,6 +71,48 @@ sub run_server {
 	}
 }
 
+sub run_script {
+    my ($script_name, @args) = @_;
+
+    my @script_types = ('py', 'pl', 'rb', 'sh', 'js');
+    my @interpreters = ('python3', 'perl', 'ruby', 'bash', 'node');
+    my %interpreter_map = map { $script_types[$_] => $interpreters[$_] } 0..$#script_types;
+
+    my @found_scripts;
+
+    # Search for scripts in template/*/script_name.*
+    foreach my $dir (glob("template/*")) {
+        foreach my $type (@script_types) {
+            my $full_path = "$dir/$script_name.$type";
+            if (-f $full_path) {
+                push @found_scripts, $full_path;
+            }
+        }
+    }
+
+    if (@found_scripts == 0) {
+        print "No scripts found for $script_name\n";
+        return;
+    }
+
+    foreach my $script (@found_scripts) {
+        my ($type) = $script =~ /\.(\w+)$/;
+
+        if (exists $interpreter_map{$type}) {
+            my $interpreter = $interpreter_map{$type};
+            print "Running $script with $interpreter...\n";
+
+            # Escape arguments to prevent shell injection
+            my @escaped_args = map { quotemeta($_) } @args;
+            my $arg_string = join(' ', @escaped_args);
+
+            system("$interpreter $script $arg_string");
+        } else {
+            print "No suitable interpreter found for $script\n";
+        }
+    }
+}
+
 sub handle_request {
 	my ($c, $r) = @_;
 
@@ -101,7 +143,7 @@ sub check_and_generate_report {
 	my $html_file = File::Spec->catfile($directory, 'log.html');
 	if (!-e $html_file || time() - (stat($html_file))[9] > 60) {
 		print "$html_file is older than 60 seconds or does not exist. Running log.html.py...\n";
-		system('python log.html.py');
+		run_script('log.html');
 	} else {
 		print "$html_file is up-to-date.\n";
 	}
@@ -111,7 +153,7 @@ sub check_and_generate_chat_html {
 	my $chat_html_file = File::Spec->catfile($directory, 'chat.html');
 	if (!-e $chat_html_file || time() - (stat($chat_html_file))[9] > 60) {
 		print "$chat_html_file is older than 60 seconds or does not exist. Running chat.html.py...\n";
-		system('python chat.html.py');
+		run_script('chat.html');
 	} else {
 		print "$chat_html_file is up-to-date.\n";
 	}
@@ -120,7 +162,7 @@ sub check_and_generate_chat_html {
 sub handle_github_update {
 	my ($c) = @_;
 	$c->send_response(HTTP::Response->new(RC_OK, 'OK', ['Content-Type' => 'text/html'], "Update triggered successfully"));
-	system('python github_update.py');
+	run_script('github_update');
 }
 
 sub handle_chat_post {
@@ -135,8 +177,10 @@ sub handle_chat_post {
 		save_message($author, $message);
 		$c->send_response(HTTP::Response->new(RC_OK, 'OK', ['Content-Type' => 'text/html'],
 			"Message saved successfully" . '<meta http-equiv="refresh" content="1;url=chat.html">'));
-		system('python commit_files.py message');
-		system('python github_update.py');
+		#system('python commit_files.py message');
+		run_script('commit_files', 'message');
+		#system('python github_update.py');
+		run_script('github_update');
 	} else {
 		$c->send_error(RC_BAD_REQUEST, "Bad Request: Missing author or message");
 	}
