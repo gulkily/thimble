@@ -1,7 +1,9 @@
+#!/usr/bin/env python3
+
 # start_server.py
 # to run: python3 start_server.py
 
-# start_server: v3
+# start_server: v4
 
 import http.server
 import socketserver
@@ -17,170 +19,215 @@ import string
 import socket
 
 class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
-	def __init__(self, *args, **kwargs):
-		self.directory = kwargs.pop('directory', os.getcwd())
-		super().__init__(*args, directory=self.directory, **kwargs)
+    def __init__(self, *args, **kwargs):
+        self.directory = kwargs.pop('directory', os.getcwd())
+        super().__init__(*args, directory=self.directory, **kwargs)
 
-	def do_GET(self):
-		if self.path == '/':
-			super().do_GET()
-		elif self.path == '/log.html':
-			self.check_and_generate_report()
-			super().do_GET()
-		elif self.path == '/chat.html':
-			self.check_and_generate_chat_html()
-			super().do_GET()
-		elif self.path == '/api/github_update':
-			self.send_response(200)
-			self.send_header('Content-type', 'text/html')
-			self.end_headers()
-			self.wfile.write(b"Update triggered successfully")
-			# update the GitHub repository using github_update.py
-			subprocess.run(['python', 'github_update.py'], check=True)
-		elif self.path.endswith('.txt'):
-			self.serve_text_file()
-		else:
-			super().do_GET()
+    def do_GET(self):
+        if self.path == '/':
+            self.serve_file('index.html')
+        elif self.path == '/log.html':
+            self.check_and_generate_report()
+            self.serve_file('log.html')
+        elif self.path == '/chat.html':
+            self.check_and_generate_chat_html()
+            self.serve_file('chat.html')
+        elif self.path == '/api/github_update':
+            self.handle_github_update()
+        elif self.path.endswith('.txt'):
+            self.serve_text_file()
+        else:
+            super().do_GET()
 
-	def do_POST(self):
-		if self.path == '/chat.html':
-			self.handle_chat_post()
-		else:
-			self.send_error(405, "Method Not Allowed")
+    def do_POST(self):
+        if self.path == '/chat.html':
+            self.handle_chat_post()
+        else:
+            self.send_error(405, "Method Not Allowed")
 
-	def handle_chat_post(self):
-		content_length = int(self.headers['Content-Length'])
-		post_data = self.rfile.read(content_length).decode('utf-8')
-		params = urllib.parse.parse_qs(post_data)
+    def handle_github_update(self):
+        self.send_response(200)
+        self.send_header('Content-type', 'text/html')
+        self.end_headers()
+        self.wfile.write(b"Update triggered successfully")
+        self.run_script('github_update')
 
-		author = params.get('author', [''])[0]
-		message = params.get('message', [''])[0]
+    def handle_chat_post(self):
+        content_length = int(self.headers['Content-Length'])
+        post_data = self.rfile.read(content_length).decode('utf-8')
+        params = urllib.parse.parse_qs(post_data)
 
-		if author and message:
-			self.save_message(author, message)
-			self.send_response(200)
-			self.send_header('Content-type', 'text/html')
-			self.end_headers()
-			self.wfile.write(b"Message saved successfully")
-			self.wfile.write(b'<meta http-equiv="refresh" content="1;url=/chat.html">')
-			# commit the message to the git repository using commit_files.py
-			subprocess.run(['python', 'commit_files.py', 'message'], check=True)
-			# update the GitHub repository using github_update.py
-			subprocess.run(['python', 'github_update.py'], check=True)
-			# redirect back to chat.html
+        author = params.get('author', [''])[0]
+        message = params.get('message', [''])[0]
 
-		else:
-			self.send_error(400, "Bad Request: Missing author or message")
+        if author and message:
+            self.save_message(author, message)
+            self.send_response(200)
+            self.send_header('Content-type', 'text/html')
+            self.end_headers()
+            self.wfile.write(b"Message saved successfully")
+            self.wfile.write(b'<meta http-equiv="refresh" content="1;url=/chat.html">')
+            self.run_script('commit_files', 'message')
+            self.run_script('github_update')
+        else:
+            self.send_error(400, "Bad Request: Missing author or message")
 
-	def save_message(self, author, message):
-		today = datetime.now().strftime('%Y-%m-%d')
-		directory = os.path.join(self.directory, 'message', today)
-		os.makedirs(directory, exist_ok=True)
+    def save_message(self, author, message):
+        today = datetime.now().strftime('%Y-%m-%d')
+        directory = os.path.join(self.directory, 'message', today)
+        os.makedirs(directory, exist_ok=True)
 
-		title = self.generate_title(message)
-		filename = f"{title}.txt"
-		filepath = os.path.join(directory, filename)
+        title = self.generate_title(message)
+        filename = f"{title}.txt"
+        filepath = os.path.join(directory, filename)
 
-		with open(filepath, 'w', encoding='utf-8') as f:
-			f.write(message)
-			f.write(f"\n\nauthor: {author}")
+        with open(filepath, 'w', encoding='utf-8') as f:
+            f.write(message)
+            f.write(f"\n\nauthor: {author}")
 
-	def generate_title(self, message):
-		words = message.split()[:5]
-		title = '_'.join(words)
-		title = ''.join(c for c in title if c.isalnum() or c in ['_', '-'])
-		if not title:
-			title = ''.join(random.choices(string.ascii_lowercase, k=10))
-		return title
+    def generate_title(self, message):
+        words = message.split()[:5]
+        title = '_'.join(words)
+        title = ''.join(c for c in title if c.isalnum() or c in ['_', '-'])
+        if not title:
+            title = ''.join(random.choices(string.ascii_lowercase, k=10))
+        return title
 
-	def check_and_generate_report(self):
-		html_file = os.path.join(self.directory, 'log.html')
-		if not os.path.exists(html_file) or time.time() - os.path.getmtime(html_file) > 60:
-			print(f"{html_file} is older than 60 seconds or does not exist. Running log.html.py...")
-			subprocess.run(['python', 'log.html.py'], check=True)
-		else:
-			print(f"{html_file} is up-to-date.")
+    def check_and_generate_report(self):
+        self.run_script_if_outdated('log.html', 'log.html')
 
-	def check_and_generate_chat_html(self):
-		chat_html_file = os.path.join(self.directory, 'chat.html')
-		if not os.path.exists(chat_html_file) or time.time() - os.path.getmtime(chat_html_file) > 60:
-			print(f"{chat_html_file} is older than 60 seconds or does not exist. Running chat.html.py...")
-			subprocess.run(['python', 'chat.html.py'], check=True)
-		else:
-			print(f"{chat_html_file} is up-to-date.")
+    def check_and_generate_chat_html(self):
+        self.run_script_if_outdated('chat.html', 'chat.html')
 
-	def serve_text_file(self):
-		path = self.translate_path(self.path)
-		try:
-			with open(path, 'r', encoding='utf-8') as f:
-				content = f.read()
+    def run_script_if_outdated(self, file_name, script_name):
+        file_path = os.path.join(self.directory, file_name)
+        if not os.path.exists(file_path) or time.time() - os.path.getmtime(file_path) > 60:
+            print(f"{file_path} is older than 60 seconds or does not exist. Running {script_name}.py...")
+            self.run_script(script_name)
+        else:
+            print(f"{file_path} is up-to-date.")
 
-			self.send_response(200)
-			self.send_header("Content-type", "text/html; charset=utf-8")
-			self.end_headers()
+    def run_script(self, script_name, *args):
+        script_types = ['py', 'pl', 'rb', 'sh', 'js']
+        interpreters = ['python3', 'perl', 'ruby', 'bash', 'node']
+        interpreter_map = dict(zip(script_types, interpreters))
 
-			html_content = f"""
-			<!DOCTYPE html>
-			<html lang="en">
-			<head>
-				<meta charset="UTF-8">
-				<meta name="viewport" content="width=device-width, initial-scale=1.0">
-				<title>{os.path.basename(path)}</title>
-				<style>
-					body {{ font-family: Arial, sans-serif; line-height: 1.6; padding: 20px; }}
-					pre {{ background-color: #f4f4f4; padding: 15px; border-radius: 5px; white-space: pre-wrap; word-wrap: break-word; }}
-				</style>
-			</head>
-			<body>
-				<h1>{os.path.basename(path)}</h1>
-				<pre>{html.escape(content)}</pre>
-			</body>
-			</html>
-			"""
+        found_scripts = []
 
-			self.wfile.write(html_content.encode('utf-8'))
-		except IOError:
-			self.send_error(404, "File not found")
+        for dir_name in os.listdir(os.path.join(self.directory, 'template')):
+            for script_type in script_types:
+                script_path = os.path.join(self.directory, 'template', dir_name, f"{script_name}.{script_type}")
+                if os.path.isfile(script_path):
+                    found_scripts.append(script_path)
 
+        if not found_scripts:
+            print(f"No scripts found for {script_name}")
+            return
 
+        for script in found_scripts:
+            script_type = os.path.splitext(script)[1][1:]
+            if script_type in interpreter_map:
+                interpreter = interpreter_map[script_type]
+                print(f"Running {script} with {interpreter}...")
+                subprocess.run([interpreter, script] + list(args), check=True)
+            else:
+                print(f"No suitable interpreter found for {script}")
+
+    def serve_file(self, path):
+        file_path = os.path.join(self.directory, path)
+        if os.path.isfile(file_path):
+            with open(file_path, 'rb') as f:
+                content = f.read()
+            content_type = self.get_content_type(file_path)
+            self.send_response(200)
+            self.send_header('Content-type', content_type)
+            self.end_headers()
+            self.wfile.write(content)
+        else:
+            self.send_error(404)
+
+    def serve_text_file(self):
+        path = self.translate_path(self.path)
+        try:
+            with open(path, 'r', encoding='utf-8') as f:
+                content = f.read()
+
+            self.send_response(200)
+            self.send_header("Content-type", "text/html; charset=utf-8")
+            self.end_headers()
+
+            html_content = f"""
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>{os.path.basename(path)}</title>
+                <style>
+                    body {{ font-family: Arial, sans-serif; line-height: 1.6; padding: 20px; }}
+                    pre {{ background-color: #f4f4f4; padding: 15px; border-radius: 5px; white-space: pre-wrap; word-wrap: break-word; }}
+                </style>
+            </head>
+            <body>
+                <h1>{os.path.basename(path)}</h1>
+                <pre>{html.escape(content)}</pre>
+            </body>
+            </html>
+            """
+
+            self.wfile.write(html_content.encode('utf-8'))
+        except IOError:
+            self.send_error(404, "File not found")
+
+    def get_content_type(self, file_path):
+        mime_types = {
+            'txt': 'text/plain',
+            'html': 'text/html',
+            'css': 'text/css',
+            'js': 'application/javascript',
+            'json': 'application/json',
+            'png': 'image/png',
+            'jpg': 'image/jpeg',
+            'gif': 'image/gif',
+        }
+        ext = os.path.splitext(file_path)[1][1:].lower()
+        return mime_types.get(ext, 'application/octet-stream')
 
 def is_port_in_use(port):
-	with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-		return s.connect_ex(('localhost', port)) == 0
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        return s.connect_ex(('localhost', port)) == 0
 
 def find_available_port(start_port):
-	port = start_port
-	while is_port_in_use(port):
-		port += 1
-	return port
+    port = start_port
+    while is_port_in_use(port):
+        port += 1
+    return port
 
 def run_server(port, directory):
-	os.chdir(directory)
-	handler = CustomHTTPRequestHandler
-	try:
-		with socketserver.TCPServer(("", port), handler) as httpd:
-			print(f"Serving HTTP on 0.0.0.0 port {port} (http://0.0.0.0:{port}/) ...")
-			httpd.serve_forever()
-	except OSError as e:
-		if e.errno == 98:  # Address already in use
-			print(f"Port {port} is already in use.")
-			return False
-	return True
+    os.chdir(directory)
+    handler = CustomHTTPRequestHandler
+    try:
+        with socketserver.TCPServer(("", port), handler) as httpd:
+            print(f"Serving HTTP on 0.0.0.0 port {port} (http://0.0.0.0:{port}/) ...")
+            httpd.serve_forever()
+    except OSError as e:
+        if e.errno == 98:  # Address already in use
+            print(f"Port {port} is already in use.")
+            return False
+    return True
 
 if __name__ == "__main__":
-	parser = argparse.ArgumentParser(description="Run a simple HTTP server.")
-	parser.add_argument('-p', '--port', type=int, help='Port to serve on (default: 8000)')
-	parser.add_argument('-d', '--directory', type=str, default=os.getcwd(), help='Directory to serve (default: current directory)')
+    parser = argparse.ArgumentParser(description="Run a simple HTTP server.")
+    parser.add_argument('-p', '--port', type=int, default=8000, help='Port to serve on (default: 8000)')
+    parser.add_argument('-d', '--directory', type=str, default=os.getcwd(), help='Directory to serve (default: current directory)')
 
-	args = parser.parse_args()
+    args = parser.parse_args()
 
-	if args.port:
-		if not run_server(args.port, args.directory):
-			print(f"Failed to start server on specified port {args.port}.")
-	else:
-		port = 8000
-		while not run_server(port, args.directory):
-			port = find_available_port(port + 1)
-			print(f"Trying port {port}...")
+    if is_port_in_use(args.port):
+        print(f"Port {args.port} is already in use.")
+        args.port = find_available_port(args.port + 1)
+        print(f"Trying port {args.port}...")
+
+    run_server(args.port, args.directory)
 
 # end of start_server.py
