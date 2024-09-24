@@ -11,12 +11,15 @@ import argparse
 import os
 import time
 import subprocess
-import html
 import urllib.parse
 from datetime import datetime
 import random
 import string
 import socket
+import html
+
+SCRIPT_TYPES = ['py', 'pl', 'rb', 'sh', 'js']
+INTERPRETERS = ['python3', 'perl', 'ruby', 'bash', 'node']
 
 class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
     def __init__(self, *args, **kwargs):
@@ -24,20 +27,18 @@ class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
         super().__init__(*args, directory=self.directory, **kwargs)
 
     def do_GET(self):
-        if self.path == '/':
-            self.serve_file('index.html')
+        if self.path in ['/', '/index.html']:
+            self.serve_static_file('index.html')
         elif self.path == '/log.html':
-            self.check_and_generate_report()
-            self.serve_file('log.html')
+            self.generate_and_serve_report()
         elif self.path == '/chat.html':
-            self.check_and_generate_chat_html()
-            self.serve_file('chat.html')
+            self.generate_and_serve_chat()
         elif self.path == '/api/github_update':
-            self.handle_github_update()
+            self.trigger_github_update()
         elif self.path.endswith('.txt'):
-            self.serve_text_file()
+            self.serve_text_file_as_html()
         else:
-            super().do_GET()
+            self.serve_static_file(self.path[1:])
 
     def do_POST(self):
         if self.path == '/chat.html':
@@ -45,7 +46,7 @@ class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
         else:
             self.send_error(405, "Method Not Allowed")
 
-    def handle_github_update(self):
+    def trigger_github_update(self):
         self.send_response(200)
         self.send_header('Content-type', 'text/html')
         self.end_headers()
@@ -60,94 +61,78 @@ class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
         author = params.get('author', [''])[0]
         message = params.get('message', [''])[0]
 
-        if author and message:
-            self.save_message(author, message)
-            self.send_response(200)
-            self.send_header('Content-type', 'text/html')
-            self.end_headers()
-            self.wfile.write(b"Message saved successfully")
-            self.wfile.write(b'<meta http-equiv="refresh" content="1;url=/chat.html">')
-            self.run_script('commit_files', 'message')
-            self.run_script('github_update')
-        else:
+        if not author or not message:
             self.send_error(400, "Bad Request: Missing author or message")
+            return
+
+        self.save_message(author, message)
+        self.send_response(302)
+        self.send_header('Content-type', 'text/html')
+        self.end_headers()
+        self.wfile.write(b"Message saved successfully")
+        self.wfile.write(b'<meta http-equiv="refresh" content="1;url=/chat.html">')
+        self.run_script('commit_files', 'message')
+        self.run_script('github_update')
 
     def save_message(self, author, message):
-        today = datetime.now().strftime('%Y-%m-%d')
-        directory = os.path.join(self.directory, 'message', today)
-        os.makedirs(directory, exist_ok=True)
-
+        timestamp = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
         title = self.generate_title(message)
-        filename = f"{title}.txt"
-        filepath = os.path.join(directory, filename)
+        filename = f"{timestamp}_{title}.txt"
 
+        message_dir = os.path.join(self.directory, 'message')
+        os.makedirs(message_dir, exist_ok=True)
+
+        filepath = os.path.join(message_dir, filename)
         with open(filepath, 'w', encoding='utf-8') as f:
-            f.write(message)
-            f.write(f"\n\nauthor: {author}")
+            f.write(f"{message}\n\nAuthor: {author}")
 
     def generate_title(self, message):
+        if not message:
+            return ''.join(random.choices(string.ascii_lowercase, k=10))
+
         words = message.split()[:5]
         title = '_'.join(words)
-        title = ''.join(c for c in title if c.isalnum() or c in ['_', '-'])
-        if not title:
-            title = ''.join(random.choices(string.ascii_lowercase, k=10))
-        return title
+        safe_title = ''.join(c for c in title if c.isalnum() or c in ['_', '-'])
+        return safe_title
 
-    def check_and_generate_report(self):
-        self.run_script_if_outdated('log.html', 'log.html')
+    def generate_and_serve_report(self):
+        self.run_script_if_needed('log.html', 'log.html')
+        self.serve_static_file('log.html')
 
-    def check_and_generate_chat_html(self):
-        self.run_script_if_outdated('chat.html', 'chat.html')
+    def generate_and_serve_chat(self):
+        self.run_script_if_needed('chat.html', 'chat.html')
+        self.serve_static_file('chat.html')
 
-    def run_script_if_outdated(self, file_name, script_name):
-        file_path = os.path.join(self.directory, file_name)
-        if not os.path.exists(file_path) or time.time() - os.path.getmtime(file_path) > 60:
-            print(f"{file_path} is older than 60 seconds or does not exist. Running {script_name}.py...")
+    def run_script_if_needed(self, output_filename, script_name):
+        output_filepath = os.path.join(self.directory, output_filename)
+        if not os.path.exists(output_filepath) or \
+           time.time() - os.path.getmtime(output_filepath) > 60:
+            print(f"Generating {output_filename}...")
             self.run_script(script_name)
-        else:
-            print(f"{file_path} is up-to-date.")
 
     def run_script(self, script_name, *args):
-        script_types = ['py', 'pl', 'rb', 'sh', 'js']
-        interpreters = ['python3', 'perl', 'ruby', 'bash', 'node']
-        interpreter_map = dict(zip(script_types, interpreters))
+        interpreter_map = dict(zip(SCRIPT_TYPES, INTERPRETERS))
 
         found_scripts = []
 
-        for dir_name in os.listdir(os.path.join(self.directory, 'template')):
-            for script_type in script_types:
-                script_path = os.path.join(self.directory, 'template', dir_name, f"{script_name}.{script_type}")
-                if os.path.isfile(script_path):
-                    found_scripts.append(script_path)
+        for template_dir in os.listdir(os.path.join(self.directory, 'template')):
+            for script_type in SCRIPT_TYPES:
+                script_path = os.path.join(self.directory, 'template', template_dir, f"{script_name}.{script_type}")
+                if os.path.exists(script_path):
+                    found_scripts.append((script_path, script_type))
 
         if not found_scripts:
             print(f"No scripts found for {script_name}")
             return
 
         for script in found_scripts:
-            script_type = os.path.splitext(script)[1][1:]
-            if script_type in interpreter_map:
-                interpreter = interpreter_map[script_type]
-                print(f"Running {script} with {interpreter}...")
-                subprocess.run([interpreter, script] + list(args), check=True)
-            else:
-                print(f"No suitable interpreter found for {script}")
+            script_path, script_type = script
+            interpreter = interpreter_map.get(script_type)
+            if interpreter:
+                subprocess.run([interpreter, script_path, *args], cwd=self.directory)
 
-    def serve_file(self, path):
-        file_path = os.path.join(self.directory, path)
-        if os.path.isfile(file_path):
-            with open(file_path, 'rb') as f:
-                content = f.read()
-            content_type = self.get_content_type(file_path)
-            self.send_response(200)
-            self.send_header('Content-type', content_type)
-            self.end_headers()
-            self.wfile.write(content)
-        else:
-            self.send_error(404)
-
-    def serve_text_file(self):
-        path = self.translate_path(self.path)
+    def serve_text_file_as_html(self):
+        path = os.path.join(self.directory, self.path[1:])
         try:
             with open(path, 'r', encoding='utf-8') as f:
                 content = f.read()
@@ -156,6 +141,7 @@ class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             self.send_header("Content-type", "text/html; charset=utf-8")
             self.end_headers()
 
+            escaped_content = html.escape(content)
             html_content = f"""
             <!DOCTYPE html>
             <html lang="en">
@@ -170,7 +156,7 @@ class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             </head>
             <body>
                 <h1>{os.path.basename(path)}</h1>
-                <pre>{html.escape(content)}</pre>
+                <pre>{escaped_content}</pre>
             </body>
             </html>
             """
@@ -178,6 +164,19 @@ class CustomHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             self.wfile.write(html_content.encode('utf-8'))
         except IOError:
             self.send_error(404, "File not found")
+
+    def serve_static_file(self, path):
+        file_path = os.path.join(self.directory, path)
+        if os.path.isfile(file_path):
+            with open(file_path, 'rb') as f:
+                content = f.read()
+            content_type = self.get_content_type(file_path)
+            self.send_response(200)
+            self.send_header('Content-type', content_type)
+            self.end_headers()
+            self.wfile.write(content)
+        else:
+            self.send_error(404)
 
     def get_content_type(self, file_path):
         mime_types = {
