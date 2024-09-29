@@ -255,3 +255,5 @@ trap('INT') { server.shutdown }
 
 puts "Serving HTTP on 0.0.0.0 port #{options[:port]} (http://0.0.0.0:#{options[:port]}/) ..."
 server.start
+
+# end of start_server.rb
