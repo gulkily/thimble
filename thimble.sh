@@ -4,65 +4,63 @@
 # to use: source thimble.sh
 
 # Define command-script pairs
-declare -A command_scripts
-command_scripts=(
-	["start"]="start_server"
-	["upgrade"]="upgrade_from_repo"
-	["fix"]="fix_line_endings"
-	["commit"]="commit_files"
-	# Add new commands here in the format:
-	# ["command_name"]="script_name"
-)
+command_scripts=""
+command_scripts="$command_scripts start:start_server"
+command_scripts="$command_scripts upgrade:upgrade_from_repo"
+command_scripts="$command_scripts fix:fix_line_endings"
+command_scripts="$command_scripts commit:commit_files"
+# Add new commands here in the format:
+# command_scripts="$command_scripts command_name:script_name"
 
 # Function to find and run a script
 run_script() {
 	script_name="$1"
 	shift  # Remove the first argument (script_name)
 	# Find all scripts matching the name
-	readarray -t scripts < <(find template -name "${script_name}.*")
+	scripts=$(find template -name "${script_name}.*")
 
-	if [ ${#scripts[@]} -eq 0 ]; then
+	if [ -z "$scripts" ]; then
 		echo "No ${script_name} scripts found."
 		return 1
 	fi
 
 	# Filter scripts based on available interpreters
-	available_scripts=()
-	for script in "${scripts[@]}"; do
+	available_scripts=""
+	for script in $scripts; do
 		case "${script##*.}" in
 			py)
-				command -v python >/dev/null 2>&1 && available_scripts+=("$script")
+				command -v python3 >/dev/null 2>&1 && available_scripts="$available_scripts $script"
 				;;
 			pl)
-				command -v perl >/dev/null 2>&1 && available_scripts+=("$script")
+				command -v perl >/dev/null 2>&1 && available_scripts="$available_scripts $script"
 				;;
 			rb)
-				command -v ruby >/dev/null 2>&1 && available_scripts+=("$script")
+				command -v ruby >/dev/null 2>&1 && available_scripts="$available_scripts $script"
 				;;
 			js)
-				command -v node >/dev/null 2>&1 && available_scripts+=("$script")
+				command -v node >/dev/null 2>&1 && available_scripts="$available_scripts $script"
 				;;
 			sh)
-				available_scripts+=("$script")
+				available_scripts="$available_scripts $script"
 				;;
 			php)
-				command -v php >/dev/null 2>&1 && available_scripts+=("$script")
+				command -v php >/dev/null 2>&1 && available_scripts="$available_scripts $script"
 				;;
 		esac
 	done
 
-	if [ ${#available_scripts[@]} -eq 0 ]; then
+	if [ -z "$available_scripts" ]; then
 		echo "No compatible ${script_name} scripts found for the current environment."
 		return 1
 	fi
 
 	# Choose a random script from available ones
-	random_script=${available_scripts[$RANDOM % ${#available_scripts[@]}]}
+	random_script=$(echo $available_scripts | tr ' ' '\n' | sort -R | head -n 1)
 
 	echo "Running: $random_script"
 	case "${random_script##*.}" in
 		py)
-			python "$random_script" "$@"
+			python3 "$random_script" "$@"
 			;;
 		pl)
 			perl "$random_script" "$@"
@@ -87,13 +85,11 @@ t() {
 	if [ -z "$1" ]; then
 		echo "Usage: t <command> [arguments...]"
 		echo "Available commands:"
-		for cmd in "${!command_scripts[@]}"; do
-			echo "  $cmd"
-		done
+		echo "$command_scripts" | tr ' ' '\n' | cut -d':' -f1
 		return
 	fi
 
-	script_name="${command_scripts[$1]}"
+	script_name=$(echo "$command_scripts" | tr ' ' '\n' | grep "^$1:" | cut -d':' -f2)
 	if [ -n "$script_name" ]; then
 		shift  # Remove the first argument (command name)
 		run_script "$script_name" "$@"
