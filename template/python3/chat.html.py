@@ -3,7 +3,7 @@
 
 import os
 import re
-from datetime import datetime
+from datetime import datetime, timezone
 import chardet
 import argparse
 from multiprocessing import Pool
@@ -37,19 +37,19 @@ def truncate_message(content, max_length=300):
 def process_file(file_path, repo_path):
     relative_path = os.path.relpath(file_path, repo_path)
     try:
-        creation_time = datetime.fromtimestamp(os.path.getctime(file_path))
+        modification_time = datetime.fromtimestamp(os.path.getmtime(file_path), tz=timezone.utc)
         with open(file_path, 'rb') as file:
-            raw_data = file.read(1024)  # Read only first 1024 bytes for encoding detection
+            raw_data = file.read()
         detected_encoding = chardet.detect(raw_data)['encoding']
-        with open(file_path, 'r', encoding=detected_encoding, errors='ignore') as file:
-            content = file.read()
+        content = raw_data.decode(detected_encoding)
         author, hashtags = extract_metadata(content)
         content = re.sub(r'author:\s*.+', '', content, flags=re.IGNORECASE).strip()
         return {
             'author': author,
             'content': content,
-            'timestamp': creation_time,
-            'hashtags': hashtags
+            'timestamp': modification_time,
+            'hashtags': hashtags,
+            'file_path': file_path
         }
     except Exception as e:
         debug_print(f"Error reading file {file_path}: {str(e)}")
@@ -73,7 +73,7 @@ def generate_chat_html(repo_path, output_file, max_messages=50, max_message_leng
         messages = pool.map(partial(process_file, repo_path=repo_path), file_paths)
 
     messages = [msg for msg in messages if msg is not None]
-    messages.sort(key=lambda x: x['timestamp'], reverse=True)
+    messages.sort(key=lambda x: (-x['timestamp'].timestamp(), x['file_path']))
     messages = messages[:max_messages]
 
     chat_messages = []
@@ -95,7 +95,7 @@ def generate_chat_html(repo_path, output_file, max_messages=50, max_message_leng
         style=CSS_STYLE,
         chat_messages=''.join(chat_messages),
         message_count=len(messages),
-        current_time=datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+        current_time=datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S'),
         title=title
     )
 
@@ -120,4 +120,4 @@ if __name__ == "__main__":
     debug_print(f"Chat log generated: {args.output_file}")
     debug_print("Script completed.")
 
-# end of chat.html.py
+# end of chat.html.py # marker comment, do not remove!
