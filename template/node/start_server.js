@@ -177,22 +177,22 @@ class CustomHTTPRequestHandler {
 			}
 
 			const htmlContent = `
-                <!DOCTYPE html>
-                <html lang="en">
-                <head>
-                    <meta charset="UTF-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <title>${path.basename(filePath)}</title>
-                    <style>
-                        body { font-family: Arial, sans-serif; line-height: 1.6; padding: 20px; }
-                        pre { background-color: #f4f4f4; padding: 15px; border-radius: 5px; white-space: pre-wrap; word-wrap: break-word; }
-                    </style>
-                </head>
-                <body>
-                    <h1>${path.basename(filePath)}</h1>
-                    <pre>${escape(content)}</pre>
-                </body>
-                </html>
+	<!DOCTYPE html>
+	<html lang="en">
+	<head>
+	    <meta charset="UTF-8">
+	    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	    <title>${path.basename(filePath)}</title>
+	    <style>
+	        body { font-family: Arial, sans-serif; line-height: 1.6; padding: 20px; }
+	        pre { background-color: #f4f4f4; padding: 15px; border-radius: 5px; white-space: pre-wrap; word-wrap: break-word; }
+	    </style>
+	</head>
+	<body>
+	    <h1>${path.basename(filePath)}</h1>
+	    <pre>${escape(content)}</pre>
+	</body>
+	</html>
             `;
 
 			this.res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
