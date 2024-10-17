@@ -2,6 +2,7 @@
 
 # chat.html.pl
 # to run: perl chat.html.pl
+# when editing this file, please retain all the comments and metadata
 
 use strict;
 use warnings;
@@ -10,6 +11,8 @@ use File::Spec;
 use Time::Local;
 use Encode qw(decode);
 use Getopt::Long;
+use threads;
+use Thread::Queue;
 
 my $DEBUG = 0;
 
@@ -21,46 +24,51 @@ debug_print("Script started.");
 
 sub read_file {
 	my ($file_path) = @_;
-	debug_print("Reading file: $file_path");
-	open my $file, '<', $file_path or die "Cannot open $file_path: $!";
+	open my $file, '<:encoding(UTF-8)', $file_path or die "Cannot open $file_path: $!";
 	my $content = do { local $/; <$file> };
 	close $file;
-	debug_print("File read successfully. Content length: " . length($content) . " characters");
 	return $content;
 }
 
 sub extract_metadata {
 	my ($content) = @_;
-	debug_print("Extracting metadata from content");
 	my $author = $content =~ /Author:\s*(.+)/i ? $1 : "Unknown";
 	my @hashtags = $content =~ /#(\w+)/g;
-	debug_print("Extracted metadata - Author: $author, Hashtags: " . join(", ", @hashtags));
 	return ($author, \@hashtags);
 }
 
 sub truncate_message {
 	my ($content, $max_length) = @_;
 	$max_length //= 300;
-	debug_print("Truncating message. Original length: " . length($content));
 	if (length($content) <= $max_length) {
-		debug_print("Message does not need truncation");
 		return ($content, 0);
 	}
-	my $truncated = substr($content, 0, $max_length) . "...";
-	debug_print("Message truncated. New length: " . length($truncated));
-	return ($truncated, 1);
+	return (substr($content, 0, $max_length) . "...", 1);
 }
 
-sub get_commit_timestamp {
+sub process_file {
 	my ($file_path) = @_;
-	my $git_log = `git log -1 --format=%ct -- "$file_path"`;
-	chomp $git_log;
-	return $git_log ? $git_log : 0;
+	my $modification_time = (stat($file_path))[9];
+	my $content = read_file($file_path);
+	my ($author, $hashtags) = extract_metadata($content);
+	$content =~ s/author:\s*.+//i;
+	$content =~ s/^\s+|\s+$//g;
+	return {
+		author => $author,
+		content => $content,
+		timestamp => $modification_time,
+		hashtags => $hashtags,
+		file_path => $file_path
+	};
 }
 
-GetOptions(
-	"debug" => \$DEBUG
-);
+sub worker {
+	my ($queue, $results) = @_;
+	while (my $file_path = $queue->dequeue_nb()) {
+		my $message = process_file($file_path);
+		$results->enqueue($message);
+	}
+}
 
 sub generate_chat_html {
 	my ($repo_path, $output_file, $max_messages, $max_message_length, $title) = @_;
@@ -75,48 +83,42 @@ sub generate_chat_html {
 	my $CSS_STYLE = read_file('./template/css/chat_style.css');
 	my $JS_TEMPLATE = read_file('./template/js/chat.js');
 
-	my @messages;
 	my $message_dir = File::Spec->catdir($repo_path, "message");
 	debug_print("Scanning directory: $message_dir");
 
+	my @file_paths;
 	find(
 		{
 			wanted => sub {
-				return unless -f && /\.txt$/;
-				my $file_path = $File::Find::name;
-				debug_print("Processing file: $file_path");
-				
-				my $commit_timestamp = get_commit_timestamp($file_path);
-				
-				my $content = read_file($file_path);
-				my ($author, $hashtags) = extract_metadata($content);
-				
-				$content =~ s/author:\s*.+//i;
-				$content =~ s/^\s+|\s+$//g;
-				debug_print("Processed content. Length: " . length($content));
-				
-				push @messages, {
-					author => $author,
-					content => $content,
-					timestamp => $commit_timestamp,
-					hashtags => $hashtags
-				};
-				debug_print("Message added. Total messages: " . scalar(@messages));
+				push @file_paths, $File::Find::name if -f && /\.txt$/;
 			},
 			no_chdir => 1
 		},
 		$message_dir
 	);
 
+	my $queue = Thread::Queue->new();
+	my $results = Thread::Queue->new();
+	$queue->enqueue(@file_paths);
+
+	my $num_threads = 4;  # Adjust based on your system
+	my @threads = map { threads->create(\&worker, $queue, $results) } 1..$num_threads;
+	$queue->enqueue((undef) x $num_threads);  # Signal workers to finish
+
+	$_->join for @threads;
+
+	my @messages;
+	while (my $message = $results->dequeue_nb()) {
+		push @messages, $message;
+	}
+
 	debug_print("Sorting messages by timestamp");
 	@messages = sort { $b->{timestamp} <=> $a->{timestamp} } @messages;
-
 	@messages = @messages[0 .. ($max_messages - 1)] if @messages > $max_messages;
 
 	my @chat_messages;
 	for my $idx (0 .. $#messages) {
 		my $msg = $messages[$idx];
-		debug_print("Processing message " . ($idx + 1) . "/" . scalar(@messages));
 		my ($truncated_content, $is_truncated) = truncate_message($msg->{content}, $max_message_length);
 		my $expand_link = $is_truncated ? qq{<a href="#" class="expand-link" data-message-id="$idx">Show More</a>} : "";
 		my $full_content = $is_truncated ? qq{<div class="full-message" id="full-message-$idx" style="display: none;">$msg->{content}</div>} : '';
@@ -127,7 +129,7 @@ sub generate_chat_html {
 		$formatted_message =~ s/\{full_content\}/$full_content/g;
 		$formatted_message =~ s/\{expand_link\}/$expand_link/g;
 		$formatted_message =~ s/\{timestamp\}/scalar localtime($msg->{timestamp})/ge;
-		$formatted_message =~ s/\{hashtags\}/@{$msg->{hashtags}}/g;
+		$formatted_message =~ s/\{hashtags\}/join(' ', @{$msg->{hashtags}})/ge;
 
 		push @chat_messages, $formatted_message;
 	}
@@ -143,7 +145,7 @@ sub generate_chat_html {
 	$html_content =~ s/<\/body>/<script>$JS_TEMPLATE<\/script><\/body>/;
 
 	debug_print("Writing HTML content to file: $output_file");
-	open my $fh, '>', $output_file or die "Cannot open $output_file: $!";
+	open my $fh, '>:encoding(UTF-8)', $output_file or die "Cannot open $output_file: $!";
 	print $fh $html_content;
 	close $fh;
 }
@@ -168,4 +170,4 @@ generate_chat_html($repo_path, $output_file, $max_messages, $max_message_length,
 debug_print("Chat log generated: $output_file");
 debug_print("Script completed.");
 
-# end of chat.html.pl
+# end of chat.html.pl # marker comment, do not remove!
