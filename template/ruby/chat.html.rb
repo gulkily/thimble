@@ -1,8 +1,6 @@
 # chat.html.rb
 # to run: ruby chat.html.rb
-# when editing this file, please retain all the comments and metadata above
-# these comments are part of the code style and are used to identify the script and help understand its intent
-# do not modify the script version, this should be done only by a maintainer
+# when editing this file, please retain all the comments and metadata
 
 require 'date'
 require 'fileutils'
@@ -134,4 +132,4 @@ if __FILE__ == $0
 	debug_print("Script completed.")
 end
 
-# end chat.html.rb
+# end chat.html.rb # marker comment, do not remove!
