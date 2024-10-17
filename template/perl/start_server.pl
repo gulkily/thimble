@@ -72,45 +72,45 @@ sub run_server {
 }
 
 sub run_script {
-    my ($script_name, @args) = @_;
+	my ($script_name, @args) = @_;
 
-    my @script_types = ('py', 'pl', 'rb', 'sh', 'js');
-    my @interpreters = ('python3', 'perl', 'ruby', 'bash', 'node');
-    my %interpreter_map = map { $script_types[$_] => $interpreters[$_] } 0..$#script_types;
+	my @script_types = ('py', 'pl', 'rb', 'sh', 'js');
+	my @interpreters = ('python3', 'perl', 'ruby', 'bash', 'node');
+	my %interpreter_map = map { $script_types[$_] => $interpreters[$_] } 0..$#script_types;
 
-    my @found_scripts;
+	my @found_scripts;
 
-    # Search for scripts in template/*/script_name.*
-    foreach my $dir (glob("template/*")) {
-        foreach my $type (@script_types) {
-            my $full_path = "$dir/$script_name.$type";
-            if (-f $full_path) {
-                push @found_scripts, $full_path;
-            }
-        }
-    }
+	# Search for scripts in template/*/script_name.*
+	foreach my $dir (glob("template/*")) {
+		foreach my $type (@script_types) {
+			my $full_path = "$dir/$script_name.$type";
+			if (-f $full_path) {
+				push @found_scripts, $full_path;
+			}
+		}
+	}
 
-    if (@found_scripts == 0) {
-        print "No scripts found for $script_name\n";
-        return;
-    }
+	if (@found_scripts == 0) {
+		print "No scripts found for $script_name\n";
+		return;
+	}
 
-    foreach my $script (@found_scripts) {
-        my ($type) = $script =~ /\.(\w+)$/;
+	foreach my $script (@found_scripts) {
+		my ($type) = $script =~ /\.(\w+)$/;
 
-        if (exists $interpreter_map{$type}) {
-            my $interpreter = $interpreter_map{$type};
-            print "Running $script with $interpreter...\n";
+		if (exists $interpreter_map{$type}) {
+			my $interpreter = $interpreter_map{$type};
+			print "Running $script with $interpreter...\n";
 
-            # Escape arguments to prevent shell injection
-            my @escaped_args = map { quotemeta($_) } @args;
-            my $arg_string = join(' ', @escaped_args);
+			# Escape arguments to prevent shell injection
+			my @escaped_args = map { quotemeta($_) } @args;
+			my $arg_string = join(' ', @escaped_args);
 
-            system("$interpreter $script $arg_string");
-        } else {
-            print "No suitable interpreter found for $script\n";
-        }
-    }
+			system("$interpreter $script $arg_string");
+		} else {
+			print "No suitable interpreter found for $script\n";
+		}
+	}
 }
 
 sub handle_request {
