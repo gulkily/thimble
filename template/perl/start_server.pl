@@ -209,7 +209,7 @@ sub generate_title {
 	$title =~ s/[^a-zA-Z0-9_-]//g;
 	$title = substr(rand() . rand(), 2, 10) if $title eq '';
 	return $title;
-}
+} # generate_title()
 
 sub serve_file {
 	my ($c, $path) = @_;
@@ -226,7 +226,7 @@ sub serve_file {
 	} else {
 		$c->send_error(RC_NOT_FOUND);
 	}
-}
+} # serve_file()
 
 sub serve_text_file {
 	my ($c, $path) = @_;
@@ -243,7 +243,7 @@ sub serve_text_file {
 	} else {
 		$c->send_error(RC_NOT_FOUND);
 	}
-}
+} # serve_text_file()
 
 sub generate_html_for_text_file {
 	my ($filename, $content) = @_;
