@@ -1,4 +1,4 @@
-# system.html.py
+# begin system.html.py ; marker comment, please do not remove
 # to run: python system.html.py
 
 import os
@@ -99,4 +99,4 @@ async def main():
 if __name__ == "__main__":
 	asyncio.run(main())
 
-# end of system.html.py
+# end system.html.py ; marker comment, please do not remove

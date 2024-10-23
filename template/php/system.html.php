@@ -1,6 +1,6 @@
 <?php
-// system.html.php
-// to run: php system.html.php
+# begin system.html.php ; marker comment, please do not remove
+# to run: php system.html.php
 
 function run_script($script_name) {
 	$output = '';
@@ -142,3 +142,5 @@ generate_html();
 $end_time = microtime(true);
 $execution_time = $end_time - $start_time;
 echo "system.html has been generated successfully. Time elapsed: " . number_format($execution_time, 2) . " seconds.\n";
+
+# end system.html.php ; marker comment, please do not remove
