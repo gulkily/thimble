@@ -18,6 +18,12 @@ async def run_script(script_name):
 			proc = await asyncio.create_subprocess_exec('python', script_name, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
 		elif script_name.endswith('.sh'):
 			proc = await asyncio.create_subprocess_exec('bash', script_name, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
+		elif script_name.endswith('.rb'):
+			proc = await asyncio.create_subprocess_exec('ruby', script_name, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
+		elif script_name.endswith('.tcl'):
+			proc = await asyncio.create_subprocess_exec('tclsh', script_name, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
+		elif script_name.endswith('.pl'):
+			proc = await asyncio.create_subprocess_exec('perl', script_name, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
 		else:
 			return f"Unsupported file type: {script_name}", "failure"
 
@@ -55,7 +61,8 @@ async def generate_html():
 		function_summary = {"function": function}
 		function_details = {"function": function, "scripts": []}
 
-		for ext in ['.js', '.php', '.py', '.sh']:
+		# Updated list of extensions including new languages
+		for ext in ['.js', '.php', '.py', '.sh', '.rb', '.tcl', '.pl']:
 			script = next((s for s in script_list if s.endswith(ext)), None)
 			if script:
 				print(f"Running {script}...")
