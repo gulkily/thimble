@@ -52,7 +52,7 @@ async def generate_html():
 	scripts = await read_scripts_file('scripts.txt')
 
 	env = Environment(loader=FileSystemLoader('./template/html'))
-	template = env.get_template('report_template.html')
+	template = env.get_template('system_template.html')
 
 	summary_data = []
 	detailed_data = []
