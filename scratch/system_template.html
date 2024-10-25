@@ -1,0 +1,66 @@
+<!-- begin system_template.html ; marker comment, please do not remove -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>{{ title }}</title>
+	<style>
+		{{ css_content }}
+	</style>
+</head>
+<body>
+<header>
+	<h1>{{ title }}</h1>
+</header>
+<main>
+	<section id="summary">
+		<h2>Summary</h2>
+		<table>
+			<tr>
+				<th>Function</th>
+				<th>JavaScript</th>
+				<th>PHP</th>
+				<th>Python</th>
+				<th>Bash</th>
+				<th>Ruby</th>
+				<th>Tcl</th>
+				<th>Perl</th>
+			</tr>
+			{% for row in summary_data %}
+			<tr>
+				<td>{{ row.function }}</td>
+				<td class="{{ row.js.status }}">{{ row.js.summary }}</td>
+				<td class="{{ row.php.status }}">{{ row.php.summary }}</td>
+				<td class="{{ row.py.status }}">{{ row.py.summary }}</td>
+				<td class="{{ row.sh.status }}">{{ row.sh.summary }}</td>
+				<td class="{{ row.rb.status }}">{{ row.rb.summary }}</td>
+				<td class="{{ row.tcl.status }}">{{ row.tcl.summary }}</td>
+				<td class="{{ row.pl.status }}">{{ row.pl.summary }}</td>
+			</tr>
+			{% endfor %}
+		</table>
+	</section>
+	<section id="details">
+		<h2>Detailed Report</h2>
+		{% for function in detailed_data %}
+		<div class="function-details">
+			<h3>{{ function.function }}</h3>
+			{% for script in function.scripts %}
+			<div class="script-result">
+				<h4>{{ script.name }}</h4>
+				<pre class="{{ script.status }}">{{ script.details }}</pre>
+			</div>
+			{% endfor %}
+		</div>
+		{% endfor %}
+	</section>
+</main>
+<footer>
+	<div class="status-bar">
+		<span class="blink">●</span> Report generated at {{ current_time }}
+	</div>
+</footer>
+</body>
+</html>
+<!-- end system_template.html ; marker comment, please do not remove -->
