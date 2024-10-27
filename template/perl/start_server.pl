@@ -40,7 +40,7 @@ sub is_port_in_use {
 	close($sock);
 
 	return $in_use;
-}
+} # is_port_in_use()
 
 sub find_available_port {
 	my ($start_port) = @_;
@@ -49,7 +49,7 @@ sub find_available_port {
 		$port++;
 	}
 	return $port;
-}
+} # find_available_port()
 
 sub run_server {
 	my ($port) = @_;
@@ -69,7 +69,7 @@ sub run_server {
 		$c->close;
 		undef($c);
 	}
-}
+} # run_server()
 
 sub run_script {
 	my ($script_name, @args) = @_;
@@ -111,7 +111,7 @@ sub run_script {
 			print "No suitable interpreter found for $script\n";
 		}
 	}
-}
+} # run_script()
 
 sub handle_request {
 	my ($c, $r) = @_;
@@ -137,7 +137,7 @@ sub handle_request {
 	} else {
 		$c->send_error(RC_METHOD_NOT_ALLOWED);
 	}
-}
+} # handle_request()
 
 sub check_and_generate_report {
 	my $html_file = File::Spec->catfile($directory, 'log.html');
@@ -147,7 +147,7 @@ sub check_and_generate_report {
 	} else {
 		print "$html_file is up-to-date.\n";
 	}
-}
+} # check_and_generate_report()
 
 sub check_and_generate_chat_html {
 	my $chat_html_file = File::Spec->catfile($directory, 'chat.html');
@@ -157,13 +157,13 @@ sub check_and_generate_chat_html {
 	} else {
 		print "$chat_html_file is up-to-date.\n";
 	}
-}
+} # check_and_generate_chat_html()
 
 sub handle_github_update {
 	my ($c) = @_;
 	$c->send_response(HTTP::Response->new(RC_OK, 'OK', ['Content-Type' => 'text/html'], "Update triggered successfully"));
 	run_script('github_update');
-}
+} # handle_github_update()
 
 sub handle_chat_post {
 	my ($c, $r) = @_;
@@ -184,7 +184,7 @@ sub handle_chat_post {
 	} else {
 		$c->send_error(RC_BAD_REQUEST, "Bad Request: Missing author or message");
 	}
-}
+} # handle_chat_post()
 
 sub save_message {
 	my ($author, $message) = @_;
@@ -200,7 +200,7 @@ sub save_message {
 	open my $fh, '>', $filepath or die "Cannot open $filepath: $!";
 	print $fh "$message\n\nauthor: $author";
 	close $fh;
-}
+} # save_message()
 
 sub generate_title {
 	my ($message) = @_;
@@ -268,7 +268,7 @@ sub generate_html_for_text_file {
 </body>
 </html>
 HTML
-}
+} # generate_html_for_text_file()
 
 sub get_content_type {
 	my ($file) = @_;
@@ -284,7 +284,7 @@ sub get_content_type {
 	);
 	my ($ext) = $file =~ /\.([^.]+)$/;
 	return $mime_types{lc $ext} || 'application/octet-stream';
-}
+} # get_content_type()
 
 if (is_port_in_use($port)) {
 	print "Port $port is already in use.\n";
