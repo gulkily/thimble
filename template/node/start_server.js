@@ -1,4 +1,4 @@
-// start_server.js
+// begin start_server.js ; marker comment, please do not remove
 // to run: node start_server.js
 
 // start_server: v4
@@ -311,4 +311,4 @@ async function main() {
 
 main().catch(console.error);
 
-// end of start_server.js
+// end start_server.js ; marker comment, please do not remove

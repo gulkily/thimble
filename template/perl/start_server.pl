@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# start_server.pl
+# begin start_server.pl ; marker comment, please do not remove
 # to run: perl start_server.pl
 
 # start_server: v4
@@ -294,4 +294,4 @@ if (is_port_in_use($port)) {
 
 run_server($port);
 
-# end of start_server.pl
+# end of start_server.pl ; marker comment, please do not remove

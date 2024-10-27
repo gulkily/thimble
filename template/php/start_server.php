@@ -1,6 +1,6 @@
 <?php
 
-# start_server.php
+# begin start_server.php ; marker comment, please do not remove
 # to run: php start_server.php
 
 # start_server: v3
@@ -224,4 +224,4 @@ if (php_sapi_name() === 'cli-server') {
 	$handler->handleRequest($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD']);
 }
 
-# end of start_server.php
+# end start_server.php ; marker comment, please do not remove

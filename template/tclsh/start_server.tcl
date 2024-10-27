@@ -1,6 +1,6 @@
 #!/usr/bin/tclsh
 
-# start_server.tcl
+# begin start_server.tcl ; marker comment, please do not remove
 # to run: tclsh start_server.tcl
 
 # start_server: v3
@@ -282,4 +282,4 @@ puts "Serving HTTP on 0.0.0.0 port $port (http://0.0.0.0:$port/) ..."
 socket -server handle_request $port
 vwait forever
 
-# end of start_server.tcl
+# end start_server.tcl ;

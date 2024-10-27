@@ -1,4 +1,4 @@
-# start_server.jl
+# begin start_server.jl ; marker comment, please do not remove
 # to run: julia start_server.jl
 
 #using Pkg
@@ -127,3 +127,5 @@ end
 
 port, directory = parse_arguments()
 run_server(port, directory)
+
+# end start_server.jl ; marker comment, please do not remove

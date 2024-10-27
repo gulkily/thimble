@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# start_server.py
+# begin start_server.py ; marker comment, please do not remove
 # to run: python3 start_server.py
 
 # start_server: v4
@@ -252,4 +252,4 @@ if __name__ == "__main__":
 
     run_server(args.port, args.directory)
 
-# end of start_server.py
+# end start_server.py ; m

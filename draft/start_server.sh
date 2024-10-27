@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# start_server.sh
+# begin start_server.sh ; marker comment, please do not remove
 # to run: ./start_server.sh
 
 PORT=8000
@@ -78,3 +78,5 @@ echo "Serving HTTP on 0.0.0.0 port $PORT (http://localhost:$PORT/) ..."
 while true; do
 	{ echo -ne "HTTP/1.1 100 Continue\r\n\r\n"; handle_request; } | nc -l -p "$PORT"
 done
+
+# end start_server.sh ; marker comment, please do not remove

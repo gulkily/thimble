@@ -1,3 +1,5 @@
+// begin start_server.c ; marker comment, please do not remove
+
 #include "mongoose.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -106,3 +108,5 @@ int main(int argc, char *argv[]) {
 
     return 0;
 }
+
+// end start_server.c ; marker comment, please do not remove

@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-# start_server.rb
+# begin start_server.rb ; marker comment, please do not remove
 # to run: ruby start_server.rb
 
 # start_server: v4
@@ -256,4 +256,4 @@ trap('INT') { server.shutdown }
 puts "Serving HTTP on 0.0.0.0 port #{options[:port]} (http://0.0.0.0:#{options[:port]}/) ..."
 server.start
 
-# end of start_server.rb
+# end start_server.rb ; marker comment, please do not remove

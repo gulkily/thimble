@@ -1,3 +1,5 @@
+// begin start_server.rs ; marker comment, please do not remove
+
 use std::fs;
 use std::io::{self, Read};
 use std::net::TcpListener;
@@ -108,3 +110,5 @@ fn serve_text_file(request: tiny_http::Request, filename: &str) -> io::Result<()
 
     request.respond(response).map_err(|e| io::Error::new(io::ErrorKind::Other, e))
 }
+
+// end start_server.rs ; marker comment, please do not remove
