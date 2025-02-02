@@ -1,0 +1,46 @@
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA256
+
+How to clean the compost bin
+
+After it is picked up from the loading dock area, the compost bin may be dirty inside.
+
+Here is an example of what it may look like: 42b7876f818b10241fa13b48d4dac68c50b4f27c
+
+Cleaning the compost bin is an easy and straightforward process, but must be performed carefully, so as to not get the operator's clothes dirty.
+
+Here is how it can be done:
+
+Step 1: Transport the compost bin to the janitor closet.
+
+Step 2: Open the compost bin's lid all the way (flip it)
+
+Step 3: Lift and tip the compost bin into/over the sink, so that any excess liquid pours out into the sink.
+
+Step 4: Place the compost bin upright again.
+
+Step 5: Test the faucet flow rate over the sink. Open the knob slowly, so that you do not get unexpected extra water pressure. Tune to a slow flow rate, which will not splash you when hitting random surfaces inside the bin.
+
+Step 6: Close the faucet, and put the hose over the compost bin.
+
+Step 7: Let the water flow slowly, and run it over the compost bin sides. Do this until about a gallon of water is at the bottom of the compost bin. Do not overfill the compost bin! Otherwise, you will not be able to lift it!
+
+Step 8: Lift and tip, just like in step 3.
+
+Repeat steps 4-8 until the compost bin looks/smells reasonably clean.
+
+Step 9: Profit of one clean compost bin! Take it back into the lounge.
+-----BEGIN PGP SIGNATURE-----
+
+wlwEAQEIABAFAmZDY4sJEED2yaahtwq8AAAHRQH+M2hakmijR7FTHbeMyuEP
+QSHmaDeFDxVAwEmctYtx49hMKh6spaPkIKXXVb6VHg8BfGz5B104TxuCyNwq
+Ro/0Bg==
+=nYIL
+-----END PGP SIGNATURE-----
+
+-- 
+Cookie: 40F6C9A6A1B70ABC
+Received: 1715692427
+Client: BE370DB5B3ED1ABC
+
