@@ -3,14 +3,13 @@
 # thimble.sh
 # to use: source thimble.sh
 
-# Define command-script pairs
+# Define command-script-description triples
 command_scripts=""
-command_scripts="$command_scripts start:start_server"
-command_scripts="$command_scripts upgrade:upgrade_from_repo"
-command_scripts="$command_scripts fix:fix_line_endings"
-command_scripts="$command_scripts commit:commit_files"
-# Add new commands here in the format:
-# command_scripts="$command_scripts command_name:script_name"
+command_scripts="$command_scripts start:start_server:Start server @ [port]"
+command_scripts="$command_scripts commit:commit_files:Commit messages"
+command_scripts="$command_scripts test:test_runner:Run validation tests"
+command_scripts="$command_scripts fix:fix_line_endings:Fix line endings"
+command_scripts="$command_scripts upgrade:upgrade_from_repo:Check updates"
 
 # Function to find and run a script
 run_script() {
@@ -80,14 +79,104 @@ run_script() {
 	esac
 }
 
-# Main function to handle subcommands
+# Add test runner function
+test_runner() {
+	local test_dir="$(pwd)/test-runs/$(date +%Y%m%d-%H%M%S)"
+	mkdir -p "$test_dir"
+	
+	# Clone test repo
+	git clone "$(pwd)" "$test_dir/test-repo"
+	
+	# Run cross-implementation tests
+	(cd "$test_dir/test-repo" && \
+	 source ../thimble.sh && \
+	 python3 template/python3/test_commit_files.py)
+	
+	echo "Test results available in: $test_dir"
+}
+
+# Command definitions with detailed help
+command_help() {
+	case "$1" in
+		start)
+			echo "Start the Thimble message server"
+			echo "Usage:    t start [port]"
+			echo "Default:  port 8080"
+			echo "Example:  t start 9090"
+			;;
+		commit)
+			echo "Commit message files with metadata"
+			echo "Usage:    t commit [path]"
+			echo "Default:  Current directory"
+			echo "Example:  t commit ~/my-repo"
+			echo "Scans for uncommitted .txt files"
+			echo "Creates metadata JSON files"
+			echo "Generates Git commits"
+			;;
+		test)
+			echo "Run validation test suite"
+			echo "Usage:    t test"
+			echo "Verifies:"
+			echo "  - Cross-implementation consistency"
+			echo "  - Metadata file integrity"
+			echo "  - Git history validation"
+			;;
+		fix)
+			echo "Normalize line endings in text files"
+			echo "Usage:    t fix [path]"
+			echo "Default:  Current directory"
+			echo "Converts DOS to UNIX line endings"
+			;;
+		upgrade)
+			echo "Update from upstream repository"
+			echo "Usage:    t upgrade"
+			echo "Fetches latest version from GitHub"
+			echo "Preserves local messages and config"
+			;;
+		*)
+			echo "No detailed help for: $1"
+			;;
+	esac
+}
+
+# Improved help display
+show_help() {
+	echo "Usage: t <command> [arguments...]"
+	echo "Available commands:"
+	echo "$command_scripts" | tr ' ' '\n' | while IFS=: read -r cmd script desc; do
+		printf "  %-12s %s\n" "$cmd" "$desc"
+	done
+	echo "\nUse 't help <command>' for detailed command help"
+}
+
+# Main function with improved help handling
 t() {
 	if [ -z "$1" ]; then
-		echo "Usage: t <command> [arguments...]"
-		echo "Available commands:"
-		echo "$command_scripts" | tr ' ' '\n' | cut -d':' -f1
+		show_help
 		return
 	fi
+
+	case "$1" in
+		help|--help|-h)
+			if [ -n "$2" ]; then
+				# Show detailed command help
+				selected_cmd="$2"
+				found=$(echo "$command_scripts" | tr ' ' '\n' | grep "^$selected_cmd:")
+				if [ -n "$found" ]; then
+					IFS=: read -r cmd script desc <<< "$found"
+					echo "Command: $cmd"
+					echo "Description: $desc"
+					echo "Usage: t $cmd [options]"
+					command_help "$cmd"
+				else
+					echo "No help available for unknown command: $selected_cmd"
+				fi
+			else
+				show_help
+			fi
+			return
+			;;
+	esac
 
 	script_name=$(echo "$command_scripts" | tr ' ' '\n' | grep "^$1:" | cut -d':' -f2)
 	if [ -n "$script_name" ]; then
