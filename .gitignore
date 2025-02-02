@@ -58,3 +58,6 @@ log.html
 # Keep specific HTML files
 !chat.html
 !index.html
+
+# Message directory
+message/
