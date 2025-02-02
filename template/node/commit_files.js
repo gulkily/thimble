@@ -60,32 +60,29 @@ function gitCommand(command) {
 }
 
 async function commitTextFiles(repoPath = '.') {
-	currDir = process.cwd();
+	const currDir = process.cwd();
+	repoPath = path.resolve(repoPath);
+	process.chdir(repoPath);
+
 	try {
-		process.chdir(repoPath);
+		// Get modified and untracked files
+		const changedFiles = gitCommand('git diff --name-only').split('\n').filter(Boolean);
+		const untrackedFiles = gitCommand('git ls-files --others --exclude-standard').split('\n').filter(Boolean);
 
-		const status = gitCommand('git status --porcelain');
-		if (!status) {
-			console.log("No changes to commit.");
-			return;
-		}
-
-		const allChangedFiles = status.split('\n').map(line => line.slice(3));
-		const txtFiles = allChangedFiles.filter(file => file.endsWith('.txt'));
+		const allFiles = [...changedFiles, ...untrackedFiles];
+		const txtFiles = allFiles.filter(f => f.endsWith('.txt'));
 
 		if (!txtFiles.length) {
 			console.log("No uncommitted .txt files found.");
 			return;
 		}
 
-		const metadataFiles = [];
-
 		for (const filePath of txtFiles) {
 			try {
-				const content = await fs.readFile(filePath, 'utf-8');
-				const metadata = await extractMetadata(content, filePath);
-				const metadataFile = await storeMetadata(filePath, metadata);
-				metadataFiles.push(metadataFile);
+				const absPath = path.join(repoPath, filePath);
+				const content = await fs.readFile(absPath, 'utf-8');
+				const metadata = await extractMetadata(content, absPath);
+				const metadataFile = await storeMetadata(absPath, metadata);
 
 				console.log(`File: ${filePath}`);
 				console.log(`Author: ${metadata.author}`);
@@ -93,20 +90,20 @@ async function commitTextFiles(repoPath = '.') {
 				console.log(`Hashtags: ${metadata.hashtags.join(', ')}`);
 				console.log(`File Hash: ${metadata.file_hash}`);
 				console.log();
+
+				gitCommand(`git add '${filePath}' '${path.relative(repoPath, metadataFile)}'`);
 			} catch (e) {
 				console.error(`Error processing file ${filePath}: ${e.message}`);
 			}
 		}
 
-		gitCommand(`git add ${[...txtFiles, ...metadataFiles].join(' ')}`);
-
-		const commitMessage = `Auto-commit ${txtFiles.length} text files and metadata on ${new Date().toISOString()}`;
-		gitCommand(`git commit -m "${commitMessage}"`);
+		// Create commit
+		const timestamp = new Date().toISOString().replace('T', ' ').split('.')[0];
+		const commitMessage = `Auto-commit ${txtFiles.length} text files and metadata on ${timestamp} by commit_files.js`;
+		gitCommand(`git commit -m '${commitMessage}'`);
 
 		console.log(`Committed ${txtFiles.length} text files and their metadata.`);
-		console.log("Commit message:", commitMessage);
-	} catch (e) {
-		console.error(`Error: ${e.message}`);
+		console.log(`Commit message: ${commitMessage}`);
 	} finally {
 		process.chdir(currDir);
 	}

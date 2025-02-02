@@ -51,66 +51,58 @@ def run_git_command(command)
 end
 
 def commit_text_files(repo_path = ".")
+	curr_dir = Dir.pwd
+	repo_path = File.expand_path(repo_path)
 	Dir.chdir(repo_path)
 
-	# Check if there are any changes
-	status_output, status_success = run_git_command("git status --porcelain")
-	if status_output.empty?
-		puts "No changes to commit."
-		return
-	end
+	begin
+		# Get modified and untracked files
+		changed_files, _ = run_git_command("git diff --name-only")
+		untracked_files, _ = run_git_command("git ls-files --others --exclude-standard")
 
-	# Get all modified and untracked files
-	changed_files, _ = run_git_command("git diff --name-only")
-	untracked_files, _ = run_git_command("git ls-files --others --exclude-standard")
+		all_files = changed_files.split("\n") + untracked_files.split("\n")
+		txt_files = all_files.select { |f| f.end_with?('.txt') }
 
-	all_files = changed_files.split("\n") + untracked_files.split("\n")
-	txt_files = all_files.select { |f| f.end_with?('.txt') }
-
-	if txt_files.empty?
-		puts "No uncommitted .txt files found."
-		return
-	end
-
-	# Process each file and store metadata
-	metadata_files = []
-	txt_files.each do |file_path|
-		full_path = File.join(repo_path, file_path)
-		begin
-			content = File.read(full_path, encoding: 'UTF-8')
-
-			metadata = extract_metadata(content, full_path)
-			metadata_file = store_metadata(full_path, metadata)
-			metadata_files << metadata_file
-
-			puts "File: #{file_path}"
-			puts "Author: #{metadata['author']}"
-			puts "Title: #{metadata['title']}"
-			puts "Hashtags: #{metadata['hashtags'].join(', ')}"
-			puts "File Hash: #{metadata['file_hash']}"
-			puts
-		rescue => e
-			puts "Error processing file #{file_path}: #{e.message}"
+		if txt_files.empty?
+			puts "No uncommitted .txt files found."
+			return
 		end
-	end
 
-	# Add all .txt files and metadata files to staging
-	files_to_add = txt_files + metadata_files
-	files_to_add.each do |file|
-		run_git_command("git add #{file}")
-	end
+		# Process each file and store metadata
+		metadata_files = []
+		txt_files.each do |file_path|
+			begin
+				abs_path = File.join(repo_path, file_path)
+				content = File.read(abs_path, encoding: 'UTF-8')
+				metadata = extract_metadata(content, abs_path)
+				metadata_file = store_metadata(abs_path, metadata)
 
-	# Create commit message
-	commit_message = "Auto-commit #{txt_files.size} text files and metadata on #{Time.now.strftime('%Y-%m-%d %H:%M:%S')} by commit_files.rb"
+				puts "File: #{file_path}"
+				puts "Author: #{metadata['author']}"
+				puts "Title: #{metadata['title']}"
+				puts "Hashtags: #{metadata['hashtags'].join(', ')}"
+				puts "File Hash: #{metadata['file_hash']}"
+				puts
 
-	# Commit the changes
-	commit_output, commit_success = run_git_command(%Q{git commit -m "#{commit_message}"})
+				rel_metadata = metadata_file.sub("#{repo_path}/", '')
+				run_git_command("git add '#{file_path}' '#{rel_metadata}'")
+				metadata_files << rel_metadata
+			rescue => e
+				puts "Error processing file #{file_path}: #{e.message}"
+			end
+		end
 
-	if commit_success
+		# Create commit
+		timestamp = Time.now.strftime('%Y-%m-%d %H:%M:%S')
+		commit_message = "Auto-commit #{txt_files.size} text files and metadata on #{timestamp} by commit_files.rb"
+		run_git_command("git commit -m '#{commit_message}'")
+
 		puts "Committed #{txt_files.size} text files and their metadata."
 		puts "Commit message: #{commit_message}"
-	else
-		puts "Failed to commit changes: #{commit_output}"
+	rescue => e
+		puts "Error: #{e.message}"
+	ensure
+		Dir.chdir(curr_dir)
 	end
 end
 

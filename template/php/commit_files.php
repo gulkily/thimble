@@ -45,59 +45,54 @@ function storeMetadata($filePath, $metadata) {
 }
 
 function commitTextFiles($repoPath = ".") {
-	// Check if it's a valid Git repository
-	if (!is_dir($repoPath . DIRECTORY_SEPARATOR . '.git')) {
-		echo "Error: $repoPath is not a valid Git repository.\n";
-		return;
-	}
+	$currDir = getcwd();
+	$repoPath = realpath($repoPath);
+	chdir($repoPath);
 
-	// Get modified and untracked files
-	exec("git -C " . escapeshellarg($repoPath) . " status --porcelain", $output);
-	$changedFiles = array_filter($output, function($line) {
-		return preg_match('/^(\s[MD]|\?\?)\s.*\.txt$/', $line);
-	});
+	try {
+		// Get modified and untracked files
+		exec("git diff --name-only", $changedFiles);
+		exec("git ls-files --others --exclude-standard", $untrackedFiles);
 
-	if (empty($changedFiles)) {
-		echo "No uncommitted .txt files found.\n";
-		return;
-	}
+		$allFiles = array_merge($changedFiles, $untrackedFiles);
+		$txtFiles = array_filter($allFiles, function($file) {
+			return substr($file, -4) === '.txt';
+		});
 
-	$metadataFiles = [];
-
-	foreach ($changedFiles as $file) {
-		$filePath = $repoPath . DIRECTORY_SEPARATOR . trim(substr($file, 3));
-
-		try {
-			$content = file_get_contents($filePath);
-			$metadata = extractMetadata($content, $filePath);
-			$metadataFile = storeMetadata($filePath, $metadata);
-			$metadataFiles[] = $metadataFile;
-
-			echo "File: " . basename($filePath) . "\n";
-			echo "Author: {$metadata['author']}\n";
-			echo "Title: {$metadata['title']}\n";
-			echo "Hashtags: " . implode(', ', $metadata['hashtags']) . "\n";
-			echo "File Hash: {$metadata['file_hash']}\n\n";
-		} catch (Exception $e) {
-			echo "Error processing file $filePath: {$e->getMessage()}\n";
+		if (empty($txtFiles)) {
+			echo "No uncommitted .txt files found.\n";
+			return;
 		}
+
+		foreach ($txtFiles as $filePath) {
+			try {
+				$absPath = $repoPath . DIRECTORY_SEPARATOR . $filePath;
+				$content = file_get_contents($absPath);
+				$metadata = extractMetadata($content, $absPath);
+				$metadataFile = storeMetadata($absPath, $metadata);
+
+				echo "File: " . basename($filePath) . "\n";
+				echo "Author: {$metadata['author']}\n";
+				echo "Title: {$metadata['title']}\n";
+				echo "Hashtags: " . implode(', ', $metadata['hashtags']) . "\n";
+				echo "File Hash: {$metadata['file_hash']}\n\n";
+
+				exec("git add " . escapeshellarg($filePath) . " " . escapeshellarg(str_replace($repoPath . DIRECTORY_SEPARATOR, '', $metadataFile)));
+			} catch (Exception $e) {
+				echo "Error processing file $filePath: {$e->getMessage()}\n";
+			}
+		}
+
+		// Create commit
+		$timestamp = date('Y-m-d H:i:s');
+		$commitMessage = "Auto-commit " . count($txtFiles) . " text files and metadata on " . $timestamp . " by commit_files.php";
+		exec("git commit -m " . escapeshellarg($commitMessage));
+
+		echo "Committed " . count($txtFiles) . " text files and their metadata.\n";
+		echo "Commit message: $commitMessage\n";
+	} finally {
+		chdir($currDir);
 	}
-
-	// Add all changed .txt files and metadata files to staging
-	$filesToAdd = array_merge(
-		array_map(function($file) { return escapeshellarg(trim(substr($file, 3))); }, $changedFiles),
-		array_map('escapeshellarg', $metadataFiles)
-	);
-	exec("git -C " . escapeshellarg($repoPath) . " add " . implode(' ', $filesToAdd));
-
-	// Create commit message
-	$commitMessage = "Auto-commit " . count($changedFiles) . " text files and metadata on " . date('Y-m-d H:i:s') . " by commit_files.php";
-
-	// Commit the changes
-	exec("git -C " . escapeshellarg($repoPath) . " commit -m " . escapeshellarg($commitMessage));
-
-	echo "Committed " . count($changedFiles) . " text files and their metadata.\n";
-	echo "Commit message: $commitMessage\n";
 }
 
 if (php_sapi_name() === 'cli') {
